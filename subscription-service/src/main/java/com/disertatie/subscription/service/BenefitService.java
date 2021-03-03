@@ -1,0 +1,138 @@
+package com.disertatie.subscription.service;
+
+import com.disertatie.subscription.dto.BenefitDTO;
+import com.disertatie.subscription.dto.ClientDTO;
+import com.disertatie.subscription.dto.ResultDTO;
+import com.disertatie.subscription.feign.ClientFeignResource;
+import com.disertatie.subscription.model.Benefit;
+import com.disertatie.subscription.model.Subscription;
+import com.disertatie.subscription.repository.BenefitRepository;
+import com.disertatie.subscription.repository.SubscriptionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+@Service
+public class BenefitService {
+
+    private BenefitRepository benefitRepository;
+    private Logger log = Logger.getLogger(BenefitService.class.getName());
+    private SubscriptionRepository subscriptionRepository;
+    private ClientFeignResource clientFeignResource;
+
+    @Autowired
+    public BenefitService(BenefitRepository benefitRepository, SubscriptionRepository subscriptionRepository,
+                          ClientFeignResource clientFeignResource) {
+        this.benefitRepository = benefitRepository;
+        this.subscriptionRepository = subscriptionRepository;
+        this.clientFeignResource = clientFeignResource;
+    }
+
+//    public void seedBenefits() {
+//        seedBenefit(1, "Minute nationale");
+//        seedBenefit(2, "SMS");
+//        seedBenefit(3, "Apeluri video");
+//        seedBenefit(4, "Minute internationale");
+//        seedBenefit(5, "Internet nelimitat");
+//        seedBenefit(6, "Roaming");
+//    }
+//
+//    private void seedBenefit(int id, String description) {
+//        Benefit benefit = benefitRepository.getById(id);
+//        if (benefit == null) {
+//            benefit = new Benefit().setId(id).setDescription(description);
+//            benefitRepository.save(benefit);
+//        }
+//    }
+
+    public List<BenefitDTO> getAllBenefits() {
+        List<BenefitDTO> benefits = new ArrayList<>();
+        for (Benefit ben : benefitRepository.findAll()) {
+            BenefitDTO bnf = new BenefitDTO()
+                    .setId(ben.getId())
+                    .setDescription(ben.getDescription());
+            benefits.add(bnf);
+        }
+        return benefits;
+    }
+
+    public Page<BenefitDTO> getAllBenefitsPaged(int page, int size) {
+
+        log.info("Listing ALL benefits...");
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        Page<Benefit> pageResult = benefitRepository.findAll(pageRequest);
+        List<BenefitDTO> benefits = pageResult
+                .stream()
+                .map(BenefitDTO::new)
+                .collect(Collectors.toList());
+        return new PageImpl<>(benefits, pageRequest, pageResult.getTotalElements());
+    }
+
+    public Page<BenefitDTO> getAllUSerBenefitsPaged(int page, int size, Principal principal) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        String clientUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        ClientDTO client = new ClientDTO();
+
+        if (clientFeignResource.getClientByUsername(clientUsername) == null) {
+            client = clientFeignResource.getClientByEmail(clientUsername);
+        } else {
+            client = clientFeignResource.getClientByUsername(clientUsername);
+        }
+
+        Subscription subscription = subscriptionRepository.getById(client.getSubscriptionId());
+        Page<Benefit> pageResult = benefitRepository.findPagedBySubId(subscription.getId(), pageRequest);
+        List<BenefitDTO> benefits = pageResult
+                .stream()
+                .map(BenefitDTO::new)
+                .collect(Collectors.toList());
+        return new PageImpl<>(benefits, pageRequest, pageResult.getTotalElements());
+    }
+
+    public List<BenefitDTO> getBenefitsBySubscription(int id) {
+
+        log.info("Listing all benefits by subscription...");
+
+        List<BenefitDTO> benefits = new ArrayList<>();
+        benefitRepository.findBySubscriptionId(id).forEach(benefit -> {
+            BenefitDTO ben = new BenefitDTO().setId(benefit.getId())
+                    .setDescription(benefit.getDescription());
+
+            benefits.add(ben);
+        });
+        return benefits.stream().distinct().collect(Collectors.toList());
+    }
+
+    public BenefitDTO createBenefit(BenefitDTO benefitDTO) {
+        Benefit benefit = new Benefit()
+                .setId(benefitDTO.getId())
+                .setDescription(benefitDTO.getDescription());
+
+        return new BenefitDTO(benefitRepository.save(benefit));
+    }
+
+    public ResultDTO deleteBenefit(int id) {
+        benefitRepository.deleteById(id);
+        return new ResultDTO().setStatus(true).setMessage("Benefit deleted.");
+    }
+
+    public BenefitDTO updateBenefit(int benefitId, BenefitDTO benefitDTO) {
+        Benefit benefit = benefitRepository.getById(benefitId);
+
+        benefit.setDescription(benefitDTO.getDescription());
+
+        benefitRepository.save(benefit);
+
+        return new BenefitDTO(benefit);
+    }
+}
