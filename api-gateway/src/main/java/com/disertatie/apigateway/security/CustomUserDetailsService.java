@@ -1,6 +1,7 @@
 package com.disertatie.apigateway.security;
 
 import com.disertatie.apigateway.dto.ClientDTO;
+import com.disertatie.apigateway.model.AuthProvider;
 import com.disertatie.apigateway.model.Client;
 import com.disertatie.apigateway.model.Role;
 import com.disertatie.apigateway.repository.ClientRepository;
@@ -91,8 +92,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .setFirstName(user.getFirstName())
                 .setLastName(user.getLastName())
                 .setCnp(user.getCnp())
-                .setStatus(user.getStatus())
                 .setAddress(user.getAddress())
+                .setAuthProvider(AuthProvider.local)
                 .setSubscriptionId(0);
         Role role = roleRepository.findByName("USER");
         newUser.setRole(role);

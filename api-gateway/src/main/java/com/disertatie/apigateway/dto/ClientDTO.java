@@ -44,4 +44,6 @@ public class ClientDTO {
         this.subscriptionId = subscriptionId;
         this.authProvider = authProvider;
     }
+
+    public ClientDTO(){}
 }
