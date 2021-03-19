@@ -26,7 +26,7 @@ public class ReviewController {
 
     @GetMapping("/{page}/{size}")
     public Page<ReviewDTO> getAll(@PathVariable(value = "page") int page,
-                                  @PathVariable(value = "size") int size) {
+                                  @PathVariable(value = "size") int size) throws IOException {
         return reviewService.getAll(page, size);
     }
 
@@ -36,7 +36,7 @@ public class ReviewController {
     }
 
     @PostMapping("/create")
-    public ReviewDTO create(@RequestBody ReviewDTO review) throws IOException {
+    public ReviewDTO create(@RequestBody ReviewDTO review){
         return reviewService.createReview(review);
     }
 

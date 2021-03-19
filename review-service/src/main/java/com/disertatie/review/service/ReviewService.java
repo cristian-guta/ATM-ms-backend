@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +33,7 @@ public class ReviewService {
         return reviewRepository.findByClientId(clientId);
     }
 
-    public ReviewDTO createReview(ReviewDTO review) throws IOException {
+    public ReviewDTO createReview(ReviewDTO review) {
 
         String clientUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         ClientDTO client = new ClientDTO();
@@ -49,13 +48,10 @@ public class ReviewService {
                 .setDescription(review.getDescription())
                 .setTitle(review.getTitle());
 
-        runPythonScript();
-
         return new ReviewDTO(reviewRepository.save(newReview));
     }
 
     public void runPythonScript() throws IOException {
-        System.out.println("Running python script");
         ProcessBuilder pb = new ProcessBuilder("python", "C:/Users/egutcri/PycharmProjects/Test/main.py");
         Process p = pb.start();
     }
@@ -65,7 +61,10 @@ public class ReviewService {
         return new ResultDTO().setMessage("Review deleted!").setStatus(true);
     }
 
-    public Page<ReviewDTO> getAll(int page, int size) {
+    public Page<ReviewDTO> getAll(int page, int size) throws IOException {
+
+        runPythonScript();
+
         PageRequest pageRequest = PageRequest.of(page, size);
 
         Page<Review> pageResult = reviewRepository.findAll(pageRequest);
