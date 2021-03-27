@@ -20,6 +20,9 @@ spring:
     username: root
     password: pacutu.98
     platform: mysql
+  jpa:
+    hibernate:
+      ddl-auto: update
   main:
     allow-bean-definition-overriding: true
 
@@ -43,6 +46,10 @@ ribbon:
 zuul:
   ignored-services: "*"
   routes:
+    payment-service:
+      url: http://localhost:9005
+      path: "/payment-service/**"
+      serviceId: payment-service
     account-service:
       url: http://localhost:9004
       path: "/account-service/**"
@@ -69,3 +76,12 @@ management:
         allowed-headers: "*"
         allowed-methods: "*"
         max-age: 3600
+
+user:
+  files:
+    base:
+      path: /src/main/resources
+max:
+  file:
+    upload:
+      size: 524288

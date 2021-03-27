@@ -56,10 +56,7 @@ public class Client {
     @Enumerated(EnumType.STRING)
     private AuthProvider authProvider;
 
-//    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @JoinColumn(name = "subscription_id")
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    private Subscription subscription;
+    private int imageModelId=0;
 
     public Client() {
     }

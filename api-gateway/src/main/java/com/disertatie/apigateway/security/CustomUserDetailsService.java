@@ -94,6 +94,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .setCnp(user.getCnp())
                 .setAddress(user.getAddress())
                 .setAuthProvider(AuthProvider.local)
+                .setImageModelId(user.getImageModelId())
                 .setSubscriptionId(0);
         Role role = roleRepository.findByName("USER");
         newUser.setRole(role);
