@@ -19,8 +19,9 @@ public class ClientDTO {
     private String password;
     private Boolean status;
     private int roleId;
+    private String imagePic;
 
-    public ClientDTO(String username, String firstName, String lastName, String cnp, String address, String email, int roleId) {
+    public ClientDTO(String username, String firstName, String lastName, String cnp, String address, String email, int roleId, String imagePic) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -28,5 +29,6 @@ public class ClientDTO {
         this.address = address;
         this.email = email;
         this.roleId = roleId;
+        this.imagePic = imagePic;
     }
 }

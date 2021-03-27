@@ -11,12 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -35,15 +35,13 @@ public class AccountService {
         this.clientFeignResource = clientFeignResource;
     }
 
-    public Account getByCurrentClient() {
-        String clientUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        ClientDTO client = clientFeignResource.getClientByUsername(clientUsername);
+    public Account getByCurrentClient(int id) {
+        ClientDTO client = clientFeignResource.getClientById(id);
+        System.out.println(client);
         return accountRepository.findAccountByClientId(client.getId());
-
     }
 
     public Page<AccountDTO> getAllAccounts(int page, int size) {
-
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Account> pageResult = accountRepository.findAll(pageRequest);
         System.out.println(pageResult.getTotalElements());
@@ -54,25 +52,25 @@ public class AccountService {
         return new PageImpl<>(accounts, pageRequest, pageResult.getTotalElements());
     }
 
-    public AccountDTO createAccount(@RequestBody AccountDTO account, int clientId) {
+    public AccountDTO createAccount(@RequestBody AccountDTO account, Principal principal) {
 
+        ClientDTO clientDTO = clientFeignResource.getClientByUsername(principal.getName());
+        log.info("Creating account");
         Account newAccount = new Account()
                 .setAmount(account.getAmount())
                 .setName(account.getName())
                 .setDetails(account.getDetails())
-                .setClientId(clientId);
+                .setClientId(clientDTO.getId());
+        System.out.println(account);
         return new AccountDTO(accountRepository.save(newAccount));
     }
 
     public ResultDTO deleteAccount(int id) {
-
         accountRepository.deleteAccountById(id);
         return new ResultDTO().setStatus(true).setMessage("Account deleted!");
     }
 
-
     public AccountDTO getAccountById(int id) {
-
         Account account = accountRepository.findAccountById(id);
         if (account != null) {
             AccountDTO acc = new AccountDTO()
@@ -89,7 +87,7 @@ public class AccountService {
     }
 
     public AccountDTO updateAccount(int id, AccountDTO accountDTO) {
-
+        System.out.println("Updating account");
         Account updateAccount = accountRepository.findAccountById(id);
         updateAccount.setId(accountDTO.getId())
                 .setName(accountDTO.getName())

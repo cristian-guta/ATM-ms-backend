@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @RestController
 @CrossOrigin("*")
@@ -26,15 +27,14 @@ public class AccountController {
         this.accountRepository = accountRepository;
     }
 
-    @GetMapping("/client")
-    public Account getByCurrentCLient() {
-        return accountService.getByCurrentClient();
+    @GetMapping("/client/{id}")
+    public Account getByCurrentCLient(@PathVariable("id") int id) {
+        System.out.println("Get by client");
+        return accountService.getByCurrentClient(id);
     }
 
     @GetMapping("/{id}")
     public AccountDTO getAccountById(@PathVariable(value = "id") int id) {
-
-        System.out.println("accounts");
         return accountService.getAccountById(id);
     }
 
@@ -45,9 +45,10 @@ public class AccountController {
         return accountService.getAllAccounts(page, size);
     }
 
-    @PostMapping(value = "/create")
-    public AccountDTO createAccount(@RequestBody AccountDTO newAccount, int clientId) {
-        return accountService.createAccount(newAccount, clientId);
+    @PostMapping("/create")
+    public AccountDTO createAccount(@RequestBody AccountDTO newAccount, Principal principal) {
+        System.out.println("Creating");
+        return accountService.createAccount(newAccount, principal);
     }
 
     @PutMapping("/update/{id}")
