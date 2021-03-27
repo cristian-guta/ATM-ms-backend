@@ -27,21 +27,16 @@ public class ClientService {
         this.clientRepository = clientRepository;
     }
 
-    public ClientDTO updateClient(Principal principal, Integer id, ClientDTO updatedClient) {
-
-        Client reqClient = clientRepository.findById(id).get();
-        Client currentClient = clientRepository.findByUsername(principal.getName());
-        if (reqClient != null && reqClient.getId() == currentClient.getId()) {
-            currentClient.setAddress(updatedClient.getAddress());
-            currentClient.setFirstName(updatedClient.getFirstName());
-            currentClient.setLastName(updatedClient.getLastName());
-            currentClient.setEmail(updatedClient.getEmail());
-            currentClient.setCnp(updatedClient.getCnp());
-
-            return new ClientDTO(clientRepository.save(currentClient));
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client not found!");
-        }
+    public Client updateClient(int id, ClientDTO updatedClient) {
+        Client client = clientRepository.getById(id)
+                .setAddress(updatedClient.getAddress())
+                .setFirstName(updatedClient.getFirstName())
+                .setLastName(updatedClient.getLastName())
+                .setEmail(updatedClient.getEmail())
+                .setCnp(updatedClient.getCnp())
+                .setUsername(updatedClient.getUsername())
+                .setSubscriptionId(updatedClient.getSubscriptionId());
+        return clientRepository.save(client);
     }
 
     public Page<ClientDTO> getAll(int page, int size) {
@@ -57,7 +52,14 @@ public class ClientService {
     }
 
     public ClientDTO getCurrentClient(Principal principal) {
-        Client client = clientRepository.findByUsername(principal.getName());
+
+        Client client = new Client();
+        if (clientRepository.findByUsername(principal.getName()) == null) {
+            client = clientRepository.findClientByEmail(principal.getName());
+        } else {
+            client = clientRepository.findByUsername(principal.getName());
+        }
+
         ClientDTO clientDTO = new ClientDTO()
                 .setId(client.getId())
                 .setAddress(client.getAddress())
@@ -67,8 +69,8 @@ public class ClientService {
                 .setLastName(client.getLastName())
                 .setPassword(client.getPassword())
                 .setStatus(client.getStatus())
-                .setUsername(client.getUsername());
-//                .setSubscriptionId(client.getSubscriptionId());
+                .setUsername(client.getUsername())
+                .setSubscriptionId(client.getSubscriptionId());
         return clientDTO;
     }
 

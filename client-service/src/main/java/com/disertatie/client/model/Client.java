@@ -19,24 +19,17 @@ public class Client {
     private int id;
 
     //    @NotNull
-    private String username;
+    private String username = "";
 
-    @NotNull
-    private String firstName;
+    private String firstName = "";
 
-    @NotNull
-    private String lastName;
+    private String lastName = "";
 
-//    @NotNull
-//    private String name;
+    private String cnp = "";
 
-    //    @NotNull
-    private String cnp;
+    private String address = "";
 
-    private String address;
-
-    @NotNull
-    private String email;
+    private String email = "";
 
     //    @JsonIgnore
     private String password;
@@ -49,6 +42,8 @@ public class Client {
     private int roleId;
 
     private boolean hasUpdated = false;
+
+    private int imageModelId = 0;
 
     @NotNull
     @Enumerated(EnumType.STRING)

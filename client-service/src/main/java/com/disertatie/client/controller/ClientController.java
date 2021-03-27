@@ -38,9 +38,8 @@ public class ClientController {
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/update/{id}")
-    public ClientDTO updateClient(Principal principal, @PathVariable("id") int theId, @RequestBody ClientDTO updatedClient) {
-
-        return clientService.updateClient(principal, theId, updatedClient);
+    public Client updateClient(@PathVariable("id") int theId, @RequestBody ClientDTO updatedClient) {
+        return clientService.updateClient(theId, updatedClient);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -57,7 +56,12 @@ public class ClientController {
 
     @GetMapping("/username/{username}")
     public Client getByUsername(@PathVariable String username) {
-        return clientRepository.findByUsername(username);
+        if (clientRepository.findByUsername(username) != null) {
+            return clientRepository.findByUsername(username);
+        } else {
+            return clientRepository.findClientByEmail(username);
+        }
+
     }
 
     @GetMapping("/email/{email}")
@@ -70,7 +74,6 @@ public class ClientController {
         return clientService.getCurrentClient(principal);
     }
 
-
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResultDTO deleteClient(@PathVariable("id") int theId) {
@@ -82,6 +85,4 @@ public class ClientController {
     public ResultDTO activateClient(@PathVariable(value = "id") Integer id) {
         return clientService.activateClient(id);
     }
-
-
 }

@@ -21,6 +21,7 @@ public class ClientDTO {
     private int subscriptionId;
     private Boolean status;
     private int roleId;
+    private int imageModelId;
 
     public ClientDTO(Client client) {
         this.id = client.getId();
@@ -34,6 +35,7 @@ public class ClientDTO {
         this.status = client.getStatus();
         this.roleId = client.getRoleId();
         this.subscriptionId = client.getSubscriptionId();
+        this.imageModelId = client.getImageModelId();
     }
 
     public ClientDTO() {

@@ -23,8 +23,6 @@ public class ClientRetentionService {
         this.clientRetentionRepository = clientRetentionRepository;
     }
 
-
-
     public Page<ClientRetention> getAllRetentionData(int page, int size){
 
         PageRequest pageRequest = PageRequest.of(page, size);
