@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name="client-service", url = "http://localhost:8765")
+@FeignClient(name = "client-service", url = "http://localhost:8765")
 public interface ClientFeignResource {
 
     @RequestMapping("/client-service/clients/username/{username}")
@@ -16,7 +16,7 @@ public interface ClientFeignResource {
     ClientDTO getClientByEmail(@PathVariable String email);
 
     @PutMapping("/client-service/clients/update/{id}")
-    ClientDTO save(@PathVariable int id, @RequestBody  ClientDTO client);
+    ClientDTO save(@PathVariable("id") int id, @RequestBody ClientDTO client);
 
     @GetMapping("/client-service/clients/findAll")
     List<ClientDTO> findAll();

@@ -12,8 +12,8 @@ import lombok.experimental.Accessors;
 public class AccountDTO {
 
     private int id;
-    private Double amount;
     private String name;
+    private Double amount;
     private String details;
     private int cliendId;
 }

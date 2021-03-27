@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -124,10 +123,10 @@ public class SubscriptionService {
 
     public ResultDTO activateSubscription(Principal principal, int subId) throws IOException {
         log.info("Activating subscription for " + principal.getName() + "...");
-        LocalDate date = LocalDate.now();
+
         Subscription subscription = subscriptionRepository.getById(subId);
 
-        String clientUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        String clientUsername = principal.getName();
 
         ClientDTO client = new ClientDTO();
 
@@ -136,9 +135,12 @@ public class SubscriptionService {
         } else {
             client = clientFeignResource.getClientByUsername(clientUsername);
         }
+        
+        System.out.println("Extracted client");
+        System.out.println(client);
 
         AccountDTO account = accountFeignResource.getClientBankAccount(client.getId());
-
+        System.out.println("Extracted account");
         log.info("Processing payment...");
 
         Double price = subscription.getPrice();
@@ -149,21 +151,19 @@ public class SubscriptionService {
         client.setSubscriptionId(subscription.getId());
         amount -= price;
         account.setAmount(amount);
+        account.setCliendId(client.getId());
 
-        clientFeignResource.save(client.getId(), client);
+//        clientFeignResource.save(client.getId(), client);
         accountFeignResource.updateAccount(account.getId(), account);
+
         log.info("Payment received...");
         log.info("Subscription activated...");
 
         return new ResultDTO().setStatus(true).setMessage("Subscription activated!");
     }
 
-    //
-//
-    public ResultDTO cancelSubscription() {
-
-        String clientUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-
+    public ResultDTO cancelSubscription(Principal principal) {
+        String clientUsername = principal.getName();
         ClientDTO client = new ClientDTO();
 
         if (clientFeignResource.getClientByUsername(clientUsername) == null) {
@@ -175,7 +175,7 @@ public class SubscriptionService {
         log.info("Canceling subscription for ..." + client.getFirstName() + " " + client.getLastName() + "...");
         client.setSubscriptionId(0);
 
-        clientFeignResource.save(client.getId(), client);
+//        clientFeignResource.save(client.getId(), client);
         log.info("Subscription canceled...");
         return new ResultDTO().setStatus(true).setMessage("Subscription removed from your account!");
     }

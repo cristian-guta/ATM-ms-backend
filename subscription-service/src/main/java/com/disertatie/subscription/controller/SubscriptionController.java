@@ -42,7 +42,7 @@ public class SubscriptionController {
     }
 
     @GetMapping("/{id}")
-    public SubscriptionDTO getSubscriptionWithBenefits(@PathVariable("id") int subId){
+    public SubscriptionDTO getSubscriptionWithBenefits(@PathVariable("id") int subId) {
         return subscriptionService.getSubscriptionWithBenefits(subId);
     }
 
@@ -57,20 +57,16 @@ public class SubscriptionController {
     public ResultDTO activateSubscription(Principal principal, @PathVariable(value = "id") int id) throws IOException {
         return subscriptionService.activateSubscription(principal, id);
     }
-//
-//
+
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/cancelSubscription")
-    public ResultDTO cancelSubscription() {
-        return subscriptionService.cancelSubscription();
+    public ResultDTO cancelSubscription(Principal principal) {
+        return subscriptionService.cancelSubscription(principal);
     }
-//
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteSubscription/{id}")
     public ResultDTO deleteSubscription(@PathVariable(value = "id") int id) {
         return subscriptionService.deleteSubscription(id);
     }
-//
-//
-
 }

@@ -20,6 +20,7 @@ public class ClientDTO {
     private int subscriptionId;
     private Boolean status;
     private int roleId;
+    private int imageModelId;
 
     public ClientDTO() {
 

@@ -71,9 +71,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/api/oauth/**").permitAll()
                 .antMatchers("/**").permitAll()
                 .antMatchers("/client-service/clients/**").permitAll()
+                .antMatchers("/subscription-service/**").permitAll()
+                .antMatchers("/account-service/**").permitAll()
                 .antMatchers("/eureka/**").permitAll()
-//                .antMatchers("/api/auth/register", "/api/auth/login").permitAll()
-//                .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(((req, res, e) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
                 .and()
@@ -87,7 +87,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Collections.singletonList("*"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
