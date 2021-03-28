@@ -36,7 +36,6 @@ public class ClientController {
         return clientRepository.findAll();
     }
 
-    @PreAuthorize("isAuthenticated()")
     @PutMapping("/update/{id}")
     public Client updateClient(@PathVariable("id") int theId, @RequestBody ClientDTO updatedClient) {
         return clientService.updateClient(theId, updatedClient);

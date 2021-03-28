@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name="image_model")
+@Table(name = "image_model")
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
@@ -15,7 +15,7 @@ public class ImageModel {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
@@ -24,13 +24,12 @@ public class ImageModel {
     @Column(name = "type")
     private String type;
 
-    @Lob
-    @Column(name = "pic")
-    private byte[] pic;
+    @Column(name = "picByte", length = 1000)
+    private byte[] picByte;
 
     public ImageModel(String originalFilename, String contentType, byte[] bytes) {
         this.name = originalFilename;
         this.type = contentType;
-        this.pic = bytes;
+        this.picByte = bytes;
     }
 }

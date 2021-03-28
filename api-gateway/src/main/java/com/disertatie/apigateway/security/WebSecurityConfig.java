@@ -84,8 +84,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/review-service/**").permitAll()
                 .antMatchers("/payment-service/**").permitAll()
                 .antMatchers("/eureka/**").permitAll()
-//                .antMatchers("/api/auth/register", "/api/auth/login").permitAll()
-//                .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(((req, res, e) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
                 .and()
