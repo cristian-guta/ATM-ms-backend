@@ -60,7 +60,6 @@ public class ClientController {
         } else {
             return clientRepository.findClientByEmail(username);
         }
-
     }
 
     @GetMapping("/email/{email}")

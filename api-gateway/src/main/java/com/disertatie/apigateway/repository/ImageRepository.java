@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface ImageRepository extends JpaRepository<ImageModel, Long> {
+public interface ImageRepository extends JpaRepository<ImageModel, Integer> {
     Optional<ImageModel> findByName(String name);
 }

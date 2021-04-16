@@ -3,12 +3,14 @@ package com.disertatie.apigateway.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "image_model")
 @AllArgsConstructor
+@Accessors(chain = true)
 @Data
 @NoArgsConstructor
 public class ImageModel {
@@ -16,7 +18,7 @@ public class ImageModel {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id = 1;
 
     @Column(name = "name")
     private String name;
@@ -24,12 +26,7 @@ public class ImageModel {
     @Column(name = "type")
     private String type;
 
-    @Column(name = "picByte", length = 1000)
+    @Column(name = "picByte", length = 10000)
     private byte[] picByte;
 
-    public ImageModel(String originalFilename, String contentType, byte[] bytes) {
-        this.name = originalFilename;
-        this.type = contentType;
-        this.picByte = bytes;
-    }
 }

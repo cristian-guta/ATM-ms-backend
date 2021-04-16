@@ -1,10 +1,11 @@
 package com.disertatie.apigateway.controller;
 
+import com.disertatie.apigateway.model.Client;
 import com.disertatie.apigateway.model.ImageModel;
+import com.disertatie.apigateway.repository.ClientRepository;
 import com.disertatie.apigateway.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -25,20 +27,34 @@ public class ImageController {
     @Autowired
     ImageRepository imageRepository;
 
-    @PostMapping(value = "/upload", produces = MediaType.MULTIPART_FORM_DATA_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public BodyBuilder uplaodImage(@RequestParam(value = "imageFile", required = false) MultipartFile file) throws IOException {
-        System.out.println("Original Image Byte Size - " + file.getBytes().length);
-        ImageModel img = new ImageModel(file.getOriginalFilename(), file.getContentType(),
-                compressBytes(file.getBytes()));
-        imageRepository.save(img);
+    @Autowired
+    ClientRepository clientRepository;
+
+    @PostMapping(value = "/upload", consumes = "multipart/form-data")
+    public BodyBuilder uploadImage(@RequestParam("imageFile") MultipartFile file, Principal principal) throws IOException {
+        Client client = clientRepository.findByUsername(principal.getName());
+        Optional<ImageModel> img = imageRepository.findByName(client.getUsername() + ".png");
+        if (img.isPresent()) {
+            imageRepository.delete(img.get());
+        }
+        img.get().setName(file.getOriginalFilename());
+        img.get().setType(file.getContentType());
+        img.get().setPicByte(compressBytes(file.getBytes()));
+
+        imageRepository.save(img.get());
+        client.setImageModelId(imageRepository.findByName(client.getUsername()+".png").get().getId());
+        clientRepository.save(client);
         return ResponseEntity.status(HttpStatus.OK);
     }
 
-    @GetMapping(path = {"/get/{imageName}"})
-    public ImageModel getImage(@PathVariable("imageName") String imageName) throws IOException {
-        final Optional<ImageModel> retrievedImage = imageRepository.findByName(imageName);
-        ImageModel img = new ImageModel(retrievedImage.get().getName(), retrievedImage.get().getType(),
-                decompressBytes(retrievedImage.get().getPicByte()));
+    @GetMapping(path = {"/get"})
+    public ImageModel getImage(Principal principal) throws IOException {
+        Client client = clientRepository.findByUsername(principal.getName());
+        final Optional<ImageModel> retrievedImage = imageRepository.findByName(client.getUsername() + ".png");
+        ImageModel img = new ImageModel();
+        img.setName(retrievedImage.get().getName());
+        img.setType(retrievedImage.get().getType());
+        img.setPicByte(decompressBytes(retrievedImage.get().getPicByte()));
         return img;
     }
 

@@ -6,6 +6,9 @@ eureka:
     register-with-eureka: false
 
 spring:
+  servlet:
+    multipart:
+      enabled: true
   security:
     oauth2:
       client:
