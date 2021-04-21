@@ -80,6 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/account-service/accounts/**").permitAll()
                 .antMatchers("/client-service/clients/**").permitAll()
+                .antMatchers("/client-service/**").permitAll()
                 .antMatchers("/subscription-service/**").permitAll()
                 .antMatchers("/review-service/**").permitAll()
                 .antMatchers("/payment-service/**").permitAll()

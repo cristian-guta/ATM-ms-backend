@@ -1,14 +1,12 @@
-package com.disertatie.apigateway.controller;
+package com.disertatie.client.service;
 
-import com.disertatie.apigateway.model.Client;
-import com.disertatie.apigateway.model.ImageModel;
-import com.disertatie.apigateway.repository.ClientRepository;
-import com.disertatie.apigateway.repository.ImageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.disertatie.client.model.Client;
+import com.disertatie.client.model.ImageModel;
+import com.disertatie.client.repository.ClientRepository;
+import com.disertatie.client.repository.ImageRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.BodyBuilder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
@@ -19,19 +17,18 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-@RestController
-@CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/image")
-public class ImageController {
+@Service
+public class ImageService {
 
-    @Autowired
-    ImageRepository imageRepository;
+    private ImageRepository imageRepository;
+    private ClientRepository clientRepository;
 
-    @Autowired
-    ClientRepository clientRepository;
+    public ImageService(ImageRepository imageRepository, ClientRepository clientRepository) {
+        this.imageRepository = imageRepository;
+        this.clientRepository = clientRepository;
+    }
 
-    @PostMapping(value = "/upload", consumes = "multipart/form-data")
-    public BodyBuilder uploadImage(@RequestParam("imageFile") MultipartFile file, Principal principal) throws IOException {
+    public ResponseEntity<HttpStatus> upload(MultipartFile file, Principal principal) throws IOException {
         Client client = clientRepository.findByUsername(principal.getName());
         Optional<ImageModel> img = imageRepository.findByName(client.getUsername() + ".png");
         if (img.isPresent()) {
@@ -42,13 +39,12 @@ public class ImageController {
         img.get().setPicByte(compressBytes(file.getBytes()));
 
         imageRepository.save(img.get());
-        client.setImageModelId(imageRepository.findByName(client.getUsername()+".png").get().getId());
+        client.setImageModelId(imageRepository.findByName(client.getUsername() + ".png").get().getId());
         clientRepository.save(client);
-        return ResponseEntity.status(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping(path = {"/get"})
-    public ImageModel getImage(Principal principal) throws IOException {
+    public ImageModel getImage(Principal principal) {
         Client client = clientRepository.findByUsername(principal.getName());
         final Optional<ImageModel> retrievedImage = imageRepository.findByName(client.getUsername() + ".png");
         ImageModel img = new ImageModel();
@@ -58,7 +54,6 @@ public class ImageController {
         return img;
     }
 
-    // compress the image bytes before storing it in the database
     public static byte[] compressBytes(byte[] data) {
         Deflater deflater = new Deflater();
         deflater.setInput(data);
@@ -73,11 +68,9 @@ public class ImageController {
             outputStream.close();
         } catch (IOException e) {
         }
-        System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
         return outputStream.toByteArray();
     }
 
-    // uncompress the image bytes before returning it to the angular application
     public static byte[] decompressBytes(byte[] data) {
         Inflater inflater = new Inflater();
         inflater.setInput(data);
@@ -89,8 +82,7 @@ public class ImageController {
                 outputStream.write(buffer, 0, count);
             }
             outputStream.close();
-        } catch (IOException ioe) {
-        } catch (DataFormatException e) {
+        } catch (IOException | DataFormatException ioe) {
         }
         return outputStream.toByteArray();
     }

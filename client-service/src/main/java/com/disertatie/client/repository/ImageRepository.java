@@ -1,6 +1,6 @@
-package com.disertatie.apigateway.repository;
+package com.disertatie.client.repository;
 
-import com.disertatie.apigateway.model.ImageModel;
+import com.disertatie.client.model.ImageModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

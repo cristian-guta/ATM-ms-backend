@@ -1,4 +1,4 @@
-package com.disertatie.apigateway.model;
+package com.disertatie.client.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
