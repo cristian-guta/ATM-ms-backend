@@ -7,6 +7,8 @@ import com.disertatie.review.feign.ClientFeignResource;
 import com.disertatie.review.model.Review;
 import com.disertatie.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +24,9 @@ public class ReviewService {
 
     private ReviewRepository reviewRepository;
     private ClientFeignResource clientFeignResource;
+
+    @Value("classpath:/python/main.py")
+    private Resource pythonSAResource;
 
     @Autowired
     public ReviewService(ClientFeignResource clientFeignResource, ReviewRepository reviewRepository) {
@@ -52,7 +57,8 @@ public class ReviewService {
     }
 
     public void runPythonScript() throws IOException {
-        ProcessBuilder pb = new ProcessBuilder("python", "C:/Users/egutcri/PycharmProjects/Test/main.py");
+        String pythonSAScriptPath = pythonSAResource.getFile().getPath();
+        ProcessBuilder pb = new ProcessBuilder("python", pythonSAScriptPath);
         Process p = pb.start();
     }
 

@@ -31,14 +31,20 @@ public class ImageService {
     public ResponseEntity<HttpStatus> upload(MultipartFile file, Principal principal) throws IOException {
         Client client = clientRepository.findByUsername(principal.getName());
         Optional<ImageModel> img = imageRepository.findByName(client.getUsername() + ".png");
-        if (img.isPresent()) {
-            imageRepository.delete(img.get());
-        }
-        img.get().setName(file.getOriginalFilename());
-        img.get().setType(file.getContentType());
-        img.get().setPicByte(compressBytes(file.getBytes()));
 
-        imageRepository.save(img.get());
+        if (img.isPresent()) {
+            img.get().setName(file.getOriginalFilename());
+            img.get().setType(file.getContentType());
+            img.get().setPicByte(compressBytes(file.getBytes()));
+            imageRepository.save(img.get());
+        } else {
+            ImageModel image = new ImageModel()
+                    .setName(file.getOriginalFilename())
+                    .setType(file.getContentType())
+                    .setPicByte(file.getBytes());
+            imageRepository.save(image);
+        }
+
         client.setImageModelId(imageRepository.findByName(client.getUsername() + ".png").get().getId());
         clientRepository.save(client);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -46,11 +52,14 @@ public class ImageService {
 
     public ImageModel getImage(Principal principal) {
         Client client = clientRepository.findByUsername(principal.getName());
-        final Optional<ImageModel> retrievedImage = imageRepository.findByName(client.getUsername() + ".png");
+        final Optional<ImageModel> retrievedImage = imageRepository.findById(client.getImageModelId());
         ImageModel img = new ImageModel();
-        img.setName(retrievedImage.get().getName());
-        img.setType(retrievedImage.get().getType());
-        img.setPicByte(decompressBytes(retrievedImage.get().getPicByte()));
+        if (retrievedImage.isPresent()) {
+            img.setName(retrievedImage.get().getName());
+            img.setType(retrievedImage.get().getType());
+            img.setPicByte(decompressBytes(retrievedImage.get().getPicByte()));
+        }
+        System.out.println(img.getName());
         return img;
     }
 
