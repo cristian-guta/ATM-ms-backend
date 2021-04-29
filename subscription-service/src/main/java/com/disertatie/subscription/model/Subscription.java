@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
 @Table(name = "subscription", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 @AllArgsConstructor
 @NoArgsConstructor
+@Audited
 public class Subscription {
 
     @Id
@@ -27,6 +30,7 @@ public class Subscription {
     @NotNull
     private Double price;
 
+    @NotAudited
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "subscriptions_benefits", joinColumns = {
             @JoinColumn(name = "subscription_id")}, inverseJoinColumns = {

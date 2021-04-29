@@ -59,7 +59,6 @@ public class ImageService {
             img.setType(retrievedImage.get().getType());
             img.setPicByte(decompressBytes(retrievedImage.get().getPicByte()));
         }
-        System.out.println(img.getName());
         return img;
     }
 

@@ -3,6 +3,7 @@ package com.disertatie.subscription.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "benefit")
 @AllArgsConstructor
+@Audited
 public class Benefit {
 
     @Id
