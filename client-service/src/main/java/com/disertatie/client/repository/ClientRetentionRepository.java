@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClientRetentionRepository extends JpaRepository<ClientRetention, Integer> {
 
-
 }

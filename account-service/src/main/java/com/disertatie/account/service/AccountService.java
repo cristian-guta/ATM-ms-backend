@@ -43,7 +43,6 @@ public class AccountService {
     public Page<AccountDTO> getAllAccounts(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Account> pageResult = accountRepository.findAll(pageRequest);
-        System.out.println(pageResult.getTotalElements());
         List<AccountDTO> accounts = pageResult
                 .stream()
                 .map(AccountDTO::new)

@@ -1,4 +1,3 @@
-import mysql.connector
 import sys
 
 sys.path.append('/Users/cristianguta/Desktop/ATM-BACKEND/review-service/venv/lib/python3.9/site-packages')
@@ -7,13 +6,6 @@ sys.path.append(
 from azure.cognitiveservices.vision.face import FaceClient
 from msrest.authentication import CognitiveServicesCredentials
 import boto3 as boto3
-
-# establish database connection
-connection = mysql.connector.connect(user='root', password='',
-                                     host='127.0.0.1', database='',
-                                     use_pure=False,
-                                     auth_plugin='mysql_native_password')
-cursor = connection.cursor()
 
 # connect to amazon s3
 
