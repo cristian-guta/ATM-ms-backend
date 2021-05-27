@@ -1,0 +1,69 @@
+import mysql.connector
+import sys
+
+sys.path.append('/Users/cristianguta/Desktop/ATM-BACKEND/review-service/venv/lib/python3.9/site-packages')
+sys.path.append(
+    '/Users/cristianguta/Desktop/ATM-BACKEND/review-service/venv/lib/python3.9/site-packages/azure/cognitiveservices/vision/face')
+from azure.cognitiveservices.vision.face import FaceClient
+from msrest.authentication import CognitiveServicesCredentials
+import boto3 as boto3
+
+# establish database connection
+connection = mysql.connector.connect(user='root', password='pacutu.98',
+                                     host='127.0.0.1', database='clientdb',
+                                     use_pure=False,
+                                     auth_plugin='mysql_native_password')
+cursor = connection.cursor()
+
+# connect to amazon s3
+
+s3 = boto3.resource(
+    service_name='s3',
+    region_name='eu-central-1',
+    aws_access_key_id='AKIA4VWJIBQY7TAGBE7I',
+    aws_secret_access_key='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'
+)
+
+
+# face and emotion recognition
+
+def get_face_client():
+    """Create an authenticated FaceClient."""
+    SUBSCRIPTION_KEY = '9d6cb49831114629b16ca379307fc583'
+    ENDPOINT = 'https://cristian.cognitiveservices.azure.com/'
+    credential = CognitiveServicesCredentials(SUBSCRIPTION_KEY)
+    return FaceClient(ENDPOINT, credential)
+
+
+def main():
+    face_client = get_face_client()
+    # url = "https://atmfmibucket.s3.eu-central-1.amazonaws.com/username.png"
+    url = sys.argv[1]
+    # print(url)
+    attributes = ["emotion", "glasses", "smile"]
+    include_id = True
+    include_landmarks = True
+    detected_faces = face_client.face.detect_with_url(url, include_id, include_landmarks, attributes, raw=True)
+
+    for atr in detected_faces.response.json():
+        faceAttributes = atr['faceAttributes']
+        emotion = faceAttributes['emotion']
+
+        anger = emotion['anger']
+        contempt = emotion['contempt']
+        disgust = emotion['disgust']
+        fear = emotion['fear']
+        happiness = emotion['happiness']
+        neutral = emotion['neutral']
+        sadness = emotion['sadness']
+        surprise = emotion['surprise']
+        emotions_dict = {"anger": anger, 'contempt': contempt, 'disgust': disgust, 'fear': fear, 'happiness': happiness,
+                         'neutral': neutral,
+                         'sadness': sadness, 'surprise': surprise}
+        emotions_dict = dict(sorted(emotions_dict.items(), reverse=True, key=lambda item: item[1]))
+        first_element = list(emotions_dict.keys())[0]
+        print(first_element)
+
+
+if __name__ == '__main__':
+    main()
