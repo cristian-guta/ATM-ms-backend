@@ -9,8 +9,8 @@ from msrest.authentication import CognitiveServicesCredentials
 import boto3 as boto3
 
 # establish database connection
-connection = mysql.connector.connect(user='root', password='pacutu.98',
-                                     host='127.0.0.1', database='clientdb',
+connection = mysql.connector.connect(user='root', password='',
+                                     host='127.0.0.1', database='',
                                      use_pure=False,
                                      auth_plugin='mysql_native_password')
 cursor = connection.cursor()
@@ -20,8 +20,8 @@ cursor = connection.cursor()
 s3 = boto3.resource(
     service_name='s3',
     region_name='eu-central-1',
-    aws_access_key_id='AKIA4VWJIBQY7TAGBE7I',
-    aws_secret_access_key='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'
+    aws_access_key_id='',
+    aws_secret_access_key=''
 )
 
 
@@ -29,8 +29,8 @@ s3 = boto3.resource(
 
 def get_face_client():
     """Create an authenticated FaceClient."""
-    SUBSCRIPTION_KEY = '9d6cb49831114629b16ca379307fc583'
-    ENDPOINT = 'https://cristian.cognitiveservices.azure.com/'
+    SUBSCRIPTION_KEY = ''
+    ENDPOINT = ''
     credential = CognitiveServicesCredentials(SUBSCRIPTION_KEY)
     return FaceClient(ENDPOINT, credential)
 
