@@ -15,6 +15,7 @@ eureka:
   instance:
     hostname: localhost
 
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -51,3 +52,10 @@ management:
         allowed-headers: "*"
         allowed-methods: "*"
         max-age: 3600
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error

@@ -8,20 +8,21 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
-        <module name="subscription-service" />
         <module name="payment-service" />
+        <module name="subscription-service" />
         <module name="account-service" />
         <module name="review-service" />
         <module name="client-service" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="account-service" target="1.8" />
-      <module name="api-gateway" target="1.8" />
-      <module name="client-service" target="1.8" />
-      <module name="payment-service" target="1.8" />
-      <module name="review-service" target="1.8" />
-      <module name="subscription-service" target="1.8" />
+    <bytecodeTargetLevel target="8">
+      <module name="account-service" target="1.5" />
+      <module name="api-gateway" target="1.5" />
+      <module name="ATM-thesis" target="8" />
+      <module name="client-service" target="1.5" />
+      <module name="payment-service" target="1.5" />
+      <module name="review-service" target="1.5" />
+      <module name="subscription-service" target="1.5" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

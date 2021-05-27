@@ -66,9 +66,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .cors()
                 .and()
+                .headers().frameOptions().disable()
+                .and()
                 .csrf().disable()
                 .authorizeRequests()
-//                .antMatchers("/api/oauth/**").permitAll()
                 .antMatchers("/**").permitAll()
                 .antMatchers("/client-service/clients/**").permitAll()
                 .antMatchers("/subscription-service/**").permitAll()
@@ -84,16 +85,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedHeaders(Collections.singletonList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        source.registerCorsConfiguration("/eureka/**", configuration);
-        return source;
-    }
 
 }

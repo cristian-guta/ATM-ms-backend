@@ -29,4 +29,7 @@ public class ImageModel {
     @Column(name = "picByte", length = 10000)
     private byte[] picByte;
 
+    @Column(name = "imgUrl")
+    private String imgUrl;
+
 }

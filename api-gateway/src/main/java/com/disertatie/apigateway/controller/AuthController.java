@@ -17,7 +17,7 @@ import java.sql.SQLException;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
 public class AuthController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());

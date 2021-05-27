@@ -89,3 +89,13 @@ max:
   file:
     upload:
       size: 524288
+
+rest:
+  security:
+    api-matcher: "/**"
+    cors:
+      allowed-headers: "*"
+      allowed-methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
+      allowed-origins: "*"
+      max-age: 3600
+    enabled: true

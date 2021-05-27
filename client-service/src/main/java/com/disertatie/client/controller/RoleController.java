@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/roles")
-@CrossOrigin("*")
 public class RoleController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());

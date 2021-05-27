@@ -57,9 +57,12 @@ public class ReviewService {
     }
 
     public void runPythonScript() throws IOException {
-        String pythonSAScriptPath = pythonSAResource.getFile().getPath();
-        ProcessBuilder pb = new ProcessBuilder("python", pythonSAScriptPath);
-        Process p = pb.start();
+        String ScriptPath = "/Users/cristianguta/Desktop/ATM-BACKEND/review-service/src/main/resources/python/main.py";
+        String pythonPath = "/Users/cristianguta/Desktop/ATM-BACKEND/review-service/venv/bin/python3.9";
+
+        ProcessBuilder processBuilder = new ProcessBuilder(pythonPath, ScriptPath);
+        processBuilder.redirectErrorStream(true);
+        Process p = processBuilder.start();
     }
 
     public ResultDTO deleteReview(int id) {

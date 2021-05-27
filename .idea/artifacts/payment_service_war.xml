@@ -7,7 +7,7 @@
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="payment-service-0.0.1-SNAPSHOT.war">
+    <root id="archive" name="${project.artifactId}-${project.version}.war">
       <element id="artifact" artifact-name="payment-service:war exploded" />
     </root>
   </artifact>

@@ -9,12 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/reviews")
-@CrossOrigin("*")
 public class ReviewController {
 
     private ReviewService reviewService;
@@ -36,7 +34,7 @@ public class ReviewController {
     }
 
     @PostMapping("/create")
-    public ReviewDTO create(@RequestBody ReviewDTO review){
+    public ReviewDTO create(@RequestBody ReviewDTO review) {
         return reviewService.createReview(review);
     }
 

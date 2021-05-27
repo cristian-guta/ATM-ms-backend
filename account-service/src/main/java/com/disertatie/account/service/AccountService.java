@@ -37,7 +37,6 @@ public class AccountService {
 
     public Account getByCurrentClient(int id) {
         ClientDTO client = clientFeignResource.getClientById(id);
-        System.out.println(client);
         return accountRepository.findAccountByClientId(client.getId());
     }
 

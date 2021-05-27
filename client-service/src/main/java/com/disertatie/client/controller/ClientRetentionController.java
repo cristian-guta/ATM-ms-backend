@@ -11,7 +11,6 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/clients-retention")
-@CrossOrigin("*")
 @PreAuthorize("hasRole('ADMIN')")
 public class ClientRetentionController {
 

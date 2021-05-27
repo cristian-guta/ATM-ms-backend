@@ -1,5 +1,6 @@
 package com.disertatie.client.controller;
 
+import com.disertatie.client.dto.ResultDTO;
 import com.disertatie.client.model.ImageModel;
 import com.disertatie.client.service.ImageService;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,6 @@ import java.io.IOException;
 import java.security.Principal;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/image")
 public class ImageController {
 
@@ -29,5 +29,10 @@ public class ImageController {
     @GetMapping(path = {"/get"})
     public ImageModel getImage(Principal principal) {
         return imageService.getImage(principal);
+    }
+
+    @PostMapping(value = "/aws", consumes = "multipart/form-data")
+    public ResultDTO uploadImageToAwsS3(@RequestParam("imageFile") MultipartFile file, Principal principal) throws IOException {
+        return imageService.uploadImageToAwsS3(file, principal);
     }
 }

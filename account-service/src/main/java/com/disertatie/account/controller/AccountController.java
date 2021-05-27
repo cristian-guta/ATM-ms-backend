@@ -3,7 +3,6 @@ package com.disertatie.account.controller;
 import com.disertatie.account.dto.AccountDTO;
 import com.disertatie.account.dto.ResultDTO;
 import com.disertatie.account.model.Account;
-import com.disertatie.account.repository.AccountRepository;
 import com.disertatie.account.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,22 +13,18 @@ import java.io.IOException;
 import java.security.Principal;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/accounts")
 public class AccountController {
 
     private AccountService accountService;
-    private AccountRepository accountRepository;
 
     @Autowired
-    public AccountController(AccountService accountService, AccountRepository accountRepository) {
+    public AccountController(AccountService accountService) {
         this.accountService = accountService;
-        this.accountRepository = accountRepository;
     }
 
     @GetMapping("/client/{id}")
     public Account getByCurrentCLient(@PathVariable("id") int id) {
-        System.out.println("Get by client");
         return accountService.getByCurrentClient(id);
     }
 
@@ -47,7 +42,6 @@ public class AccountController {
 
     @PostMapping("/create")
     public AccountDTO createAccount(@RequestBody AccountDTO newAccount, Principal principal) {
-        System.out.println("Creating");
         return accountService.createAccount(newAccount, principal);
     }
 
