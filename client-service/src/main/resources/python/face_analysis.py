@@ -37,9 +37,7 @@ def get_face_client():
 
 def main():
     face_client = get_face_client()
-    # url = "https://atmfmibucket.s3.eu-central-1.amazonaws.com/username.png"
     url = sys.argv[1]
-    # print(url)
     attributes = ["emotion", "glasses", "smile"]
     include_id = True
     include_landmarks = True
