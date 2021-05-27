@@ -54,6 +54,7 @@ public class ImageService {
         try {
             outputStream.close();
         } catch (IOException e) {
+            e.printStackTrace();
         }
         return outputStream.toByteArray();
     }
@@ -70,6 +71,7 @@ public class ImageService {
             }
             outputStream.close();
         } catch (IOException | DataFormatException ioe) {
+            ioe.printStackTrace();
         }
         return outputStream.toByteArray();
     }
@@ -121,8 +123,6 @@ public class ImageService {
         fileOutputStream.close();
         String fileName = client.getUsername() + ".png";
         String bucket = "atmfmibucket";
-//        String key = "AKIA4VWJIBQY7TAGBE7I";
-//        InputStream stream = new ByteArrayInputStream(multipartFile.getBytes());
         Regions clientRegion = Regions.EU_CENTRAL_1;
         File fileToUpload = new File(fileName);
 
