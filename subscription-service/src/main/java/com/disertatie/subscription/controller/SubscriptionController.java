@@ -3,8 +3,7 @@ package com.disertatie.subscription.controller;
 import com.disertatie.subscription.dto.ResultDTO;
 import com.disertatie.subscription.dto.SubscriptionDTO;
 import com.disertatie.subscription.service.SubscriptionService;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,17 +11,12 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
-@Data
 @RestController
+@AllArgsConstructor
 @RequestMapping("/subscriptions")
 public class SubscriptionController {
 
     private SubscriptionService subscriptionService;
-
-    @Autowired
-    public SubscriptionController(SubscriptionService subscriptionService) {
-        this.subscriptionService = subscriptionService;
-    }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")

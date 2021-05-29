@@ -12,8 +12,8 @@ import boto3 as boto3
 s3 = boto3.resource(
     service_name='s3',
     region_name='eu-central-1',
-    aws_access_key_id='',
-    aws_secret_access_key=''
+    aws_access_key_id='AKIA4VWJIBQY7TAGBE7I',
+    aws_secret_access_key='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'
 )
 
 
@@ -21,8 +21,8 @@ s3 = boto3.resource(
 
 def get_face_client():
     """Create an authenticated FaceClient."""
-    SUBSCRIPTION_KEY = ''
-    ENDPOINT = ''
+    SUBSCRIPTION_KEY = '9d6cb49831114629b16ca379307fc583'
+    ENDPOINT = 'https://cristian.cognitiveservices.azure.com/'
     credential = CognitiveServicesCredentials(SUBSCRIPTION_KEY)
     return FaceClient(ENDPOINT, credential)
 
@@ -30,15 +30,17 @@ def get_face_client():
 def main():
     face_client = get_face_client()
     url = sys.argv[1]
+    # url = "https://atmfmibucket.s3.eu-central-1.amazonaws.com/username.png"
     attributes = ["emotion", "glasses", "smile"]
     include_id = True
     include_landmarks = True
     detected_faces = face_client.face.detect_with_url(url, include_id, include_landmarks, attributes, raw=True)
 
     for atr in detected_faces.response.json():
+
         faceAttributes = atr['faceAttributes']
         emotion = faceAttributes['emotion']
-
+        # print(faceAttributes)
         anger = emotion['anger']
         contempt = emotion['contempt']
         disgust = emotion['disgust']

@@ -27,7 +27,7 @@ public class ClientService {
         this.clientRepository = clientRepository;
     }
 
-    public Client updateClient(int id, ClientDTO updatedClient) {
+    public ClientDTO updateClient(int id, ClientDTO updatedClient) {
         Client client = clientRepository.getById(id)
                 .setAddress(updatedClient.getAddress())
                 .setFirstName(updatedClient.getFirstName())
@@ -36,7 +36,7 @@ public class ClientService {
                 .setCnp(updatedClient.getCnp())
                 .setUsername(updatedClient.getUsername())
                 .setSubscriptionId(updatedClient.getSubscriptionId());
-        return clientRepository.save(client);
+        return new ClientDTO(clientRepository.save(client));
     }
 
     public Page<ClientDTO> getAll(int page, int size) {
@@ -91,5 +91,24 @@ public class ClientService {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!");
         }
+    }
+
+    public List<ClientDTO> findAll() {
+        return clientRepository.findAll().stream()
+                .map(ClientDTO::new)
+                .collect(Collectors.toList());
+
+    }
+
+    public ClientDTO findByUsername(String username) {
+        if (clientRepository.findByUsername(username) != null) {
+            return new ClientDTO(clientRepository.findByUsername(username));
+        } else {
+            return new ClientDTO(clientRepository.findClientByEmail(username));
+        }
+    }
+
+    public ClientDTO findByEmail(String email) {
+        return new ClientDTO(clientRepository.findClientByEmail(email));
     }
 }

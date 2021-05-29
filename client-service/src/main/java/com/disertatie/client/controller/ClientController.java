@@ -31,12 +31,12 @@ public class ClientController {
     }
 
     @GetMapping("/findAll")
-    public List<Client> findAll() {
-        return clientRepository.findAll();
+    public List<ClientDTO> findAll() {
+        return clientService.findAll();
     }
 
     @PutMapping("/update/{id}")
-    public Client updateClient(@PathVariable("id") int theId, @RequestBody ClientDTO updatedClient) {
+    public ClientDTO updateClient(@PathVariable("id") int theId, @RequestBody ClientDTO updatedClient) {
         return clientService.updateClient(theId, updatedClient);
     }
 
@@ -53,17 +53,13 @@ public class ClientController {
     }
 
     @GetMapping("/username/{username}")
-    public Client getByUsername(@PathVariable String username) {
-        if (clientRepository.findByUsername(username) != null) {
-            return clientRepository.findByUsername(username);
-        } else {
-            return clientRepository.findClientByEmail(username);
-        }
+    public ClientDTO getByUsername(@PathVariable String username) {
+        return clientService.findByUsername(username);
     }
 
     @GetMapping("/email/{email}")
-    public Client getByEmail(@PathVariable String email) {
-        return clientRepository.findClientByEmail(email);
+    public ClientDTO getByEmail(@PathVariable String email) {
+        return clientService.findByEmail(email);
     }
 
     @GetMapping("/current")

@@ -3,6 +3,7 @@ package com.disertatie.review.dto;
 import com.disertatie.review.model.Review;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -10,14 +11,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Getter
 @Setter
+@NoArgsConstructor
 public class ReviewDTO {
     private int id;
     private String title;
     private String description;
     private int clientId;
-
-    public ReviewDTO() {
-    }
 
     public ReviewDTO(Review review) {
         this.id = review.getId();

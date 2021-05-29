@@ -7,8 +7,6 @@ import com.disertatie.review.feign.ClientFeignResource;
 import com.disertatie.review.model.Review;
 import com.disertatie.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -25,17 +23,16 @@ public class ReviewService {
     private ReviewRepository reviewRepository;
     private ClientFeignResource clientFeignResource;
 
-    @Value("classpath:/python/main.py")
-    private Resource pythonSAResource;
-
     @Autowired
     public ReviewService(ClientFeignResource clientFeignResource, ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
         this.clientFeignResource = clientFeignResource;
     }
 
-    public List<Review> getAllByClientId(int clientId) {
-        return reviewRepository.findByClientId(clientId);
+    public List<ReviewDTO> getAllByClientId(int clientId) {
+        return reviewRepository.findByClientId(clientId).stream()
+                .map(ReviewDTO::new)
+                .collect(Collectors.toList());
     }
 
     public ReviewDTO createReview(ReviewDTO review) {

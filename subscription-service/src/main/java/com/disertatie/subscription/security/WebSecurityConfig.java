@@ -14,13 +14,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -72,14 +67,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()
                 .antMatchers("/client-service/clients/**").permitAll()
-                .antMatchers("/subscription-service/**").permitAll()
                 .antMatchers("/account-service/**").permitAll()
                 .antMatchers("/eureka/**").permitAll()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(((req, res, e) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
-                .and()
-                .oauth2Login()
-
                 .and()
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

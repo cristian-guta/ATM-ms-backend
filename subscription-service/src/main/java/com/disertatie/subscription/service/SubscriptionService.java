@@ -10,7 +10,6 @@ import com.disertatie.subscription.model.Benefit;
 import com.disertatie.subscription.model.Subscription;
 import com.disertatie.subscription.repository.BenefitRepository;
 import com.disertatie.subscription.repository.SubscriptionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +29,6 @@ public class SubscriptionService {
 
     private Logger log = Logger.getLogger(SubscriptionService.class.getName());
 
-    @Autowired
     public SubscriptionService(SubscriptionRepository subscriptionRepository, BenefitRepository benefitRepository,
                                AccountFeignResource accountFeignResource, ClientFeignResource clientFeignResource) {
         this.subscriptionRepository = subscriptionRepository;
@@ -135,7 +133,7 @@ public class SubscriptionService {
         } else {
             client = clientFeignResource.getClientByUsername(clientUsername);
         }
-        
+
         System.out.println("Extracted client");
         System.out.println(client);
 

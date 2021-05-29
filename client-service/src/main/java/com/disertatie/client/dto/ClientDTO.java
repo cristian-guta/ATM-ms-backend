@@ -1,5 +1,6 @@
 package com.disertatie.client.dto;
 
+import com.disertatie.client.model.AuthProvider;
 import com.disertatie.client.model.Client;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class ClientDTO {
     private Boolean status;
     private int roleId;
     private int imageModelId;
+    private AuthProvider authProvider;
 
     public ClientDTO(Client client) {
         this.id = client.getId();
@@ -36,6 +38,7 @@ public class ClientDTO {
         this.roleId = client.getRoleId();
         this.subscriptionId = client.getSubscriptionId();
         this.imageModelId = client.getImageModelId();
+        this.authProvider = client.getAuthProvider();
     }
 
     public ClientDTO() {

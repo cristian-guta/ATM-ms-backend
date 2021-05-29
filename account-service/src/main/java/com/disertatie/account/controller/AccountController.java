@@ -24,7 +24,7 @@ public class AccountController {
     }
 
     @GetMapping("/client/{id}")
-    public Account getByCurrentCLient(@PathVariable("id") int id) {
+    public AccountDTO getByCurrentCLient(@PathVariable("id") int id) {
         return accountService.getByCurrentClient(id);
     }
 

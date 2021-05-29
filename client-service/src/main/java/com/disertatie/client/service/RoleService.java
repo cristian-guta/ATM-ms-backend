@@ -40,7 +40,7 @@ public class RoleService {
         return new RoleDTO(roleRepository.save(role));
     }
 
-    public Role getRoleById(int roleId) {
-        return roleRepository.findById(roleId);
+    public RoleDTO getRoleById(int roleId) {
+        return new RoleDTO(roleRepository.findById(roleId));
     }
 }

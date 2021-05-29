@@ -42,11 +42,3 @@ app:
   oauth2:
     authorizedRedirectUris:
       - http://localhost:8080/oauth2/redirect
-management:
-  endpoints:
-    web:
-      cors:
-        allowed-origins: "*"
-        allowed-headers: "*"
-        allowed-methods: "*"
-        max-age: 3600

@@ -35,9 +35,10 @@ public class AccountService {
         this.clientFeignResource = clientFeignResource;
     }
 
-    public Account getByCurrentClient(int id) {
+    public AccountDTO getByCurrentClient(int id) {
         ClientDTO client = clientFeignResource.getClientById(id);
-        return accountRepository.findAccountByClientId(client.getId());
+
+        return new AccountDTO(accountRepository.findAccountByClientId(client.getId()));
     }
 
     public Page<AccountDTO> getAllAccounts(int page, int size) {
