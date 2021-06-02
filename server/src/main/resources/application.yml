@@ -1,0 +1,12 @@
+server:
+  # Server port is set to 8761
+  port: 8761
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761
+    # Server doesnot required to register it self hence set to false
+    registerWithEureka: false
+    # Server Does not required to fetch the registry it self
+    fetchRegistry: false
