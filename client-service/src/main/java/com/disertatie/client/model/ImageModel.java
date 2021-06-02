@@ -18,7 +18,7 @@ public class ImageModel {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id = 1;
+    private int id;
 
     @Column(name = "name")
     private String name;

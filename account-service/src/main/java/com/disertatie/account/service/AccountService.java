@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -37,8 +38,8 @@ public class AccountService {
 
     public AccountDTO getByCurrentClient(int id) {
         ClientDTO client = clientFeignResource.getClientById(id);
-
-        return new AccountDTO(accountRepository.findAccountByClientId(client.getId()));
+        Optional<Account> account = accountRepository.findAccountByClientId(client.getId());
+        return account.map(AccountDTO::new).orElseGet(AccountDTO::new);
     }
 
     public Page<AccountDTO> getAllAccounts(int page, int size) {
@@ -75,7 +76,7 @@ public class AccountService {
             AccountDTO acc = new AccountDTO()
                     .setId(account.getId())
                     .setDetails(account.getDetails())
-                    .setCliendId(account.getClientId())
+                    .setClientId(account.getClientId())
                     .setAmount(account.getAmount())
                     .setName(account.getName());
 

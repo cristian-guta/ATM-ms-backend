@@ -18,7 +18,7 @@ public class SubscriptionController {
 
     private SubscriptionService subscriptionService;
 
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     @GetMapping("")
     public List<SubscriptionDTO> getAllAvailableSubscriptions() {
         return subscriptionService.getAllAvailableSubs();

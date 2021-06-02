@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
@@ -83,13 +84,14 @@ public class ImageService {
             img.get().setName(file.getOriginalFilename());
             img.get().setType(file.getContentType());
             img.get().setPicByte(compressBytes(file.getBytes()));
-            img.get().setImgUrl(encodeImage(decompressBytes(img.get().getPicByte())));
+            img.get().setImgUrl(encodeImage(file.getBytes()));
             imageRepository.save(img.get());
         } else {
             ImageModel image = new ImageModel()
                     .setName(file.getOriginalFilename())
                     .setType(file.getContentType())
-                    .setPicByte(file.getBytes());
+                    .setPicByte(compressBytes(file.getBytes()))
+                    .setImgUrl(encodeImage(file.getBytes()));
             imageRepository.save(image);
         }
 

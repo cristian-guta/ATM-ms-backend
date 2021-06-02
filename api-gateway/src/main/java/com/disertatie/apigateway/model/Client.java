@@ -52,7 +52,7 @@ public class Client {
     @Enumerated(EnumType.STRING)
     private AuthProvider authProvider;
 
-    private int imageModelId=0;
+    private int imageModelId;
 
     public Client() {
     }

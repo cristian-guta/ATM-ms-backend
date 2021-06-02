@@ -16,14 +16,14 @@ public class AccountDTO {
     private Double amount;
     private String name;
     private String details;
-    private int cliendId;
+    private int clientId;
 
     public AccountDTO(Account account) {
         this.id = account.getId();
         this.name = account.getName();
         this.amount = account.getAmount();
         this.details = account.getDetails();
-        this.cliendId = account.getClientId();
+        this.clientId = account.getClientId();
     }
 
 }

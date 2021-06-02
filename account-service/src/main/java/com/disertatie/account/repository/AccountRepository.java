@@ -11,13 +11,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Integer> {
 
     Account findAccountsByName(String name);
 
-    Account findAccountByClientId(int id);
+    Optional<Account> findAccountByClientId(int id);
 
     @Query("select a from Account a where a.id = ?1")
     Account findAccountById(int id);
