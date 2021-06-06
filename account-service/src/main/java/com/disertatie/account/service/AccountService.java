@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,7 +21,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,13 +28,15 @@ public class AccountService {
 
     private AccountRepository accountRepository;
     private ClientFeignResource clientFeignResource;
+    private OperationService operationService;
 
-    private Logger log = Logger.getLogger(AccountService.class.getName());
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, ClientFeignResource clientFeignResource) {
+    public AccountService(AccountRepository accountRepository, ClientFeignResource clientFeignResource,
+                          OperationService operationService) {
         this.accountRepository = accountRepository;
         this.clientFeignResource = clientFeignResource;
+        this.operationService = operationService;
     }
 
     public AccountDTO getByCurrentClient(int id) {
@@ -54,8 +57,7 @@ public class AccountService {
 
     public AccountDTO createAccount(@RequestBody AccountDTO account, Principal principal) {
 
-        ClientDTO clientDTO = clientFeignResource.getClientByUsername(principal.getName());
-        log.info("Creating account");
+        ClientDTO clientDTO = getClient(principal);
         Account newAccount = new Account()
                 .setAmount(account.getAmount())
                 .setName(account.getName())
@@ -73,21 +75,18 @@ public class AccountService {
     public AccountDTO getAccountById(int id) {
         Account account = accountRepository.findAccountById(id);
         if (account != null) {
-            AccountDTO acc = new AccountDTO()
+            return new AccountDTO()
                     .setId(account.getId())
                     .setDetails(account.getDetails())
                     .setClientId(account.getClientId())
                     .setAmount(account.getAmount())
                     .setName(account.getName());
-
-            return acc;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found!");
         }
     }
 
     public AccountDTO updateAccount(int id, AccountDTO accountDTO) {
-        System.out.println("Updating account");
         Account updateAccount = accountRepository.findAccountById(id);
         updateAccount.setId(accountDTO.getId())
                 .setName(accountDTO.getName())
@@ -106,7 +105,7 @@ public class AccountService {
 
         accountRepository.save(account);
 
-//        operationService.createOperation(principal, account.getId(), 0, "deposit", amount);
+        operationService.createOperation(getAuthenticatedUser(), account.getId(), 0, "DEPOSIT", amount);
         return new ResultDTO().setStatus(true).setMessage("Money deposed!");
     }
 
@@ -120,7 +119,8 @@ public class AccountService {
             } else {
                 account.setAmount(total);
                 accountRepository.save(account);
-//                operationService.createOperation(principal, account.getId(), 0, "deposit", amount);
+                ClientDTO clientDTO = getAuthenticatedUser();
+                operationService.createOperation(clientDTO, accountId, 0, "WITHDRAW", amount);
             }
         } catch (RuntimeException exc) {
             exc.printStackTrace();
@@ -144,15 +144,32 @@ public class AccountService {
                 toSendTo.setAmount(receiverAmount);
 
                 accountRepository.save(toSendTo);
+                operationService.createOperation(getAuthenticatedUser(), senderAccountId, receiverAccountId, "TRANSFER", amount);
 
-//                operationService.createOperation(principal, account.getId(), toSendTo.getId(), "transfer", amount);
             } else {
                 throw new RuntimeException("You want to transfer more than you own! Throwing exception...");
             }
         } catch (RuntimeException exc) {
             exc.printStackTrace();
         }
-
         return new ResultDTO().setStatus(true).setMessage("Amount successfully transfered!");
+    }
+
+    public ClientDTO getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+        if (clientFeignResource.getClientByUsername(login) == null) {
+            return clientFeignResource.getClientByEmail(login);
+        } else {
+            return clientFeignResource.getClientByUsername(login);
+        }
+    }
+
+    public ClientDTO getClient(Principal principal) {
+        if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
+            return clientFeignResource.getClientByEmail(principal.getName());
+        } else {
+            return clientFeignResource.getClientByUsername(principal.getName());
+        }
     }
 }

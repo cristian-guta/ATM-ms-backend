@@ -85,8 +85,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public Client save(ClientDTO user) {
         log.info("Saving new client account...");
-        Client lookForClient = new Client();
-        if(clientRepository.findByUsername(user.getUsername())!=null || clientRepository.findClientByEmail(user.getEmail())!=null){
+        if (clientRepository.findByUsername(user.getUsername()) != null || clientRepository.findClientByEmail(user.getEmail()) != null) {
             throw new RuntimeException("User already exists!");
         }
         Client newUser = new Client()

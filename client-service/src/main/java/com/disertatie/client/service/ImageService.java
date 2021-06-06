@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.disertatie.client.dto.ResultDTO;
+import com.disertatie.client.exception.ImageNotFoundException;
 import com.disertatie.client.model.Client;
 import com.disertatie.client.model.ClientEmotion;
 import com.disertatie.client.model.ImageModel;
@@ -21,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.security.Principal;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
@@ -105,13 +105,22 @@ public class ImageService {
     }
 
     public ImageModel getImage(Principal principal) {
-        Client client = clientRepository.findByUsername(principal.getName());
-        final Optional<ImageModel> retrievedImage = imageRepository.findById(client.getImageModelId());
         ImageModel img = new ImageModel();
-        if (retrievedImage.isPresent()) {
-            img.setName(retrievedImage.get().getName());
-            img.setType(retrievedImage.get().getType());
-            img.setPicByte(decompressBytes(retrievedImage.get().getPicByte()));
+
+        try {
+            Client client = clientRepository.findByUsername(principal.getName());
+            final Optional<ImageModel> retrievedImage = imageRepository.findById(client.getImageModelId());
+
+            if (retrievedImage.isPresent()) {
+                img.setName(retrievedImage.get().getName());
+                img.setType(retrievedImage.get().getType());
+                img.setPicByte(decompressBytes(retrievedImage.get().getPicByte()));
+
+            } else {
+                throw new ImageNotFoundException("Image not found!");
+            }
+        } catch (Exception exc) {
+            log.info(exc.getMessage());
         }
         return img;
     }
