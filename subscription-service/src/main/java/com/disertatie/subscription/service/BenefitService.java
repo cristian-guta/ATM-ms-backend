@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -29,30 +30,12 @@ public class BenefitService {
     private SubscriptionRepository subscriptionRepository;
     private ClientFeignResource clientFeignResource;
 
-    @Autowired
     public BenefitService(BenefitRepository benefitRepository, SubscriptionRepository subscriptionRepository,
                           ClientFeignResource clientFeignResource) {
         this.benefitRepository = benefitRepository;
         this.subscriptionRepository = subscriptionRepository;
         this.clientFeignResource = clientFeignResource;
     }
-
-//    public void seedBenefits() {
-//        seedBenefit(1, "Minute nationale");
-//        seedBenefit(2, "SMS");
-//        seedBenefit(3, "Apeluri video");
-//        seedBenefit(4, "Minute internationale");
-//        seedBenefit(5, "Internet nelimitat");
-//        seedBenefit(6, "Roaming");
-//    }
-//
-//    private void seedBenefit(int id, String description) {
-//        Benefit benefit = benefitRepository.getById(id);
-//        if (benefit == null) {
-//            benefit = new Benefit().setId(id).setDescription(description);
-//            benefitRepository.save(benefit);
-//        }
-//    }
 
     public List<BenefitDTO> getAllBenefits() {
         List<BenefitDTO> benefits = new ArrayList<>();
@@ -78,18 +61,10 @@ public class BenefitService {
         return new PageImpl<>(benefits, pageRequest, pageResult.getTotalElements());
     }
 
-    public Page<BenefitDTO> getAllUSerBenefitsPaged(int page, int size, Principal principal) {
+    public Page<BenefitDTO> getAllUSerBenefitsPaged(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        String clientUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        ClientDTO client = new ClientDTO();
-
-        if (clientFeignResource.getClientByUsername(clientUsername) == null) {
-            client = clientFeignResource.getClientByEmail(clientUsername);
-        } else {
-            client = clientFeignResource.getClientByUsername(clientUsername);
-        }
-
+        ClientDTO client = getAuthenticatedUser();
         Subscription subscription = subscriptionRepository.getById(client.getSubscriptionId());
         Page<Benefit> pageResult = benefitRepository.findPagedBySubId(subscription.getId(), pageRequest);
         List<BenefitDTO> benefits = pageResult
@@ -134,5 +109,15 @@ public class BenefitService {
         benefitRepository.save(benefit);
 
         return new BenefitDTO(benefit);
+    }
+
+    public ClientDTO getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+        if (clientFeignResource.getClientByUsername(login) == null) {
+            return clientFeignResource.getClientByEmail(login);
+        } else {
+            return clientFeignResource.getClientByUsername(login);
+        }
     }
 }

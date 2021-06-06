@@ -21,12 +21,12 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @PostMapping(value = "/upload", consumes = "multipart/form-data")
+    @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<HttpStatus> uploadImage(@RequestParam("imageFile") MultipartFile file, Principal principal) throws IOException {
         return imageService.upload(file, principal);
     }
 
-    @GetMapping(path = {"/get"})
+    @GetMapping
     public ImageModel getImage(Principal principal) {
         return imageService.getImage(principal);
     }

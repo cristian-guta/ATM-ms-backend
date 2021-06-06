@@ -24,7 +24,6 @@ public class ClientController {
     private ClientService clientService;
     private ClientRepository clientRepository;
 
-    @Autowired
     public ClientController(ClientService clientService, ClientRepository clientRepository) {
         this.clientService = clientService;
         this.clientRepository = clientRepository;

@@ -16,7 +16,6 @@ public class ClientRetentionController {
 
     private ClientRetentionService clientRetentionService;
 
-    @Autowired
     public ClientRetentionController(ClientRetentionService clientRetentionService) {
         this.clientRetentionService = clientRetentionService;
     }

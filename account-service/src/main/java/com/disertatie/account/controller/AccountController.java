@@ -2,15 +2,12 @@ package com.disertatie.account.controller;
 
 import com.disertatie.account.dto.AccountDTO;
 import com.disertatie.account.dto.ResultDTO;
-import com.disertatie.account.model.Account;
 import com.disertatie.account.service.AccountService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/accounts")
@@ -18,7 +15,6 @@ public class AccountController {
 
     private AccountService accountService;
 
-    @Autowired
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
@@ -34,18 +30,18 @@ public class AccountController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/getAllAccounts/{page}/{size}")
+    @GetMapping("/{page}/{size}")
     public Page<AccountDTO> getAllAccounts(@PathVariable(value = "page") int page,
                                            @PathVariable(value = "size") int size) {
         return accountService.getAllAccounts(page, size);
     }
 
-    @PostMapping("/create")
-    public AccountDTO createAccount(@RequestBody AccountDTO newAccount, Principal principal) {
-        return accountService.createAccount(newAccount, principal);
+    @PostMapping
+    public AccountDTO createAccount(@RequestBody AccountDTO newAccount) {
+        return accountService.createAccount(newAccount);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public AccountDTO updateAccount(@PathVariable(value = "id") int id, @RequestBody AccountDTO accountDTO) {
         return accountService.updateAccount(id, accountDTO);
     }
@@ -56,11 +52,11 @@ public class AccountController {
     }
 
     @PutMapping("/deposit/{id}/{amount}")
-    public ResultDTO depositMoney(@PathVariable(value = "id") int accountId, @PathVariable(value = "amount") Double amount) throws IOException {
+    public ResultDTO depositMoney(@PathVariable(value = "id") int accountId, @PathVariable(value = "amount") Double amount) {
         return accountService.depositMoney(accountId, amount);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResultDTO deleteAccount(@PathVariable(value = "id") int id) {
         return accountService.deleteAccount(id);
     }

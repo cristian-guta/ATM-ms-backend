@@ -3,6 +3,7 @@ package com.disertatie.subscription.controller;
 import com.disertatie.subscription.dto.BenefitDTO;
 import com.disertatie.subscription.dto.ResultDTO;
 import com.disertatie.subscription.service.BenefitService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,12 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
-
+@AllArgsConstructor
 @RestController
 @RequestMapping("/benefits")
 public class BenefitController {
 
-    @Autowired
     private BenefitService benefitService;
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -28,8 +28,8 @@ public class BenefitController {
 
     @GetMapping("/user/{page}/{size}")
     public Page<BenefitDTO> getAllUserBenefitsPaged(@PathVariable(value = "page") int page,
-                                                    @PathVariable(value = "size") int size, Principal principal) {
-        return benefitService.getAllUSerBenefitsPaged(page, size, principal);
+                                                    @PathVariable(value = "size") int size) {
+        return benefitService.getAllUSerBenefitsPaged(page, size);
     }
 
     @GetMapping("/unpagedBenefits")

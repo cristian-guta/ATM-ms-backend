@@ -28,12 +28,12 @@ public class ReviewController {
         return reviewService.getAllByClientId(clientId);
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ReviewDTO create(@RequestBody ReviewDTO review) {
         return reviewService.createReview(review);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResultDTO deleteReview(@PathVariable(value = "id") int id) {
         return reviewService.deleteReview(id);
     }

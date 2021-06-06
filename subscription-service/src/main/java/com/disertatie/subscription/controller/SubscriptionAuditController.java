@@ -26,7 +26,6 @@ public class SubscriptionAuditController {
     private SubscriptionAuditRepository subscriptionAuditRepository;
     private RevisionInfoRepository revisionInfoRepository;
 
-    @Autowired
     public SubscriptionAuditController(SubscriptionAuditRepository subscriptionAuditRepository, RevisionInfoRepository revisionInfoRepository) {
         this.subscriptionAuditRepository = subscriptionAuditRepository;
         this.revisionInfoRepository = revisionInfoRepository;

@@ -18,7 +18,6 @@ public class ClientEmotionsService {
 
     private ClientEmotionRepository clientEmotionRepository;
 
-
     public Page<ClientEmotionsDTO> getAllEmotions(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<ClientEmotion> pageResult = clientEmotionRepository.findAll(pageRequest);

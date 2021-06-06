@@ -47,10 +47,10 @@ public class OperationService {
         }
     }
 
-    public Page<OperationDTO> getAllOperations(int page, int size, Principal principal) {
+    public Page<OperationDTO> getAllOperations(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        ClientDTO client = getClient(principal);
+        ClientDTO client = getAuthenticatedUser();
 
         Page<Operation> pageResult;
         RoleDTO role = roleFeignResource.getRoleById(client.getRoleId());
@@ -88,14 +88,6 @@ public class OperationService {
 //            emailService.createPDF(operation, principal, null);
         }
         operationRepository.save(operation);
-    }
-
-    public ClientDTO getClient(Principal principal) {
-        if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
-            return clientFeignResource.getClientByEmail(principal.getName());
-        } else {
-            return clientFeignResource.getClientByUsername(principal.getName());
-        }
     }
 
     public ClientDTO getAuthenticatedUser() {

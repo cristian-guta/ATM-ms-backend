@@ -10,6 +10,7 @@ import com.disertatie.subscription.model.Benefit;
 import com.disertatie.subscription.model.Subscription;
 import com.disertatie.subscription.repository.BenefitRepository;
 import com.disertatie.subscription.repository.SubscriptionRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -48,19 +49,10 @@ public class SubscriptionService {
         return new SubscriptionDTO(subscriptionRepository.save(subscription));
     }
 
-    public SubscriptionDTO getClientSubscription(Principal principal) {
+    public SubscriptionDTO getClientSubscription() {
         log.info("Fetching client's subscription");
 
-        String clientUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        ClientDTO client = new ClientDTO();
-
-        if (clientFeignResource.getClientByUsername(clientUsername) == null) {
-            client = clientFeignResource.getClientByEmail(clientUsername);
-        } else {
-            client = clientFeignResource.getClientByUsername(clientUsername);
-        }
-
+        ClientDTO client = getAuthenticatedUser();
         Subscription subscription = new Subscription();
         if (client.getSubscriptionId() != 0 && client.getUsername() != "admin") {
             subscription = subscriptionRepository.getById(client.getSubscriptionId());
@@ -119,26 +111,12 @@ public class SubscriptionService {
         return new SubscriptionDTO(updateSubscription);
     }
 
-    public ResultDTO activateSubscription(Principal principal, int subId) throws IOException {
-        log.info("Activating subscription for " + principal.getName() + "...");
-
+    public ResultDTO activateSubscription(int subId) throws IOException {
         Subscription subscription = subscriptionRepository.getById(subId);
-
-        String clientUsername = principal.getName();
-
-        ClientDTO client = new ClientDTO();
-
-        if (clientFeignResource.getClientByUsername(clientUsername) == null) {
-            client = clientFeignResource.getClientByEmail(clientUsername);
-        } else {
-            client = clientFeignResource.getClientByUsername(clientUsername);
-        }
-
-        System.out.println("Extracted client");
-        System.out.println(client);
+        ClientDTO client = getAuthenticatedUser();
+        log.info("Activating subscription for " + client.getUsername() + "...");
 
         AccountDTO account = accountFeignResource.getClientBankAccount(client.getId());
-        System.out.println("Extracted account");
         log.info("Processing payment...");
 
         Double price = subscription.getPrice();
@@ -146,12 +124,10 @@ public class SubscriptionService {
         if (amount < price) {
             throw new RuntimeException("Not enough funds!");
         }
-        client.setSubscriptionId(subscription.getId());
         amount -= price;
         account.setAmount(amount);
         account.setCliendId(client.getId());
 
-//        clientFeignResource.save(client.getId(), client);
         accountFeignResource.updateAccount(account.getId(), account);
 
         log.info("Payment received...");
@@ -160,20 +136,12 @@ public class SubscriptionService {
         return new ResultDTO().setStatus(true).setMessage("Subscription activated!");
     }
 
-    public ResultDTO cancelSubscription(Principal principal) {
-        String clientUsername = principal.getName();
-        ClientDTO client = new ClientDTO();
-
-        if (clientFeignResource.getClientByUsername(clientUsername) == null) {
-            client = clientFeignResource.getClientByEmail(clientUsername);
-        } else {
-            client = clientFeignResource.getClientByUsername(clientUsername);
-        }
+    public ResultDTO cancelSubscription() {
+        ClientDTO client = getAuthenticatedUser();
 
         log.info("Canceling subscription for ..." + client.getFirstName() + " " + client.getLastName() + "...");
         client.setSubscriptionId(0);
 
-//        clientFeignResource.save(client.getId(), client);
         log.info("Subscription canceled...");
         return new ResultDTO().setStatus(true).setMessage("Subscription removed from your account!");
     }
@@ -190,5 +158,15 @@ public class SubscriptionService {
 
         subscriptionRepository.deleteSubscriptionById(id);
         return new ResultDTO().setStatus(true).setMessage("Subscription deleted.");
+    }
+
+    public ClientDTO getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+        if (clientFeignResource.getClientByUsername(login) == null) {
+            return clientFeignResource.getClientByEmail(login);
+        } else {
+            return clientFeignResource.getClientByUsername(login);
+        }
     }
 }

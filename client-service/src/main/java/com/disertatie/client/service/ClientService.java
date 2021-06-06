@@ -96,7 +96,6 @@ public class ClientService {
         return clientRepository.findAll().stream()
                 .map(ClientDTO::new)
                 .collect(Collectors.toList());
-
     }
 
     public ClientDTO findByUsername(String username) {

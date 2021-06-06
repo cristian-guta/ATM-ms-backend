@@ -6,7 +6,6 @@ import com.disertatie.account.dto.ResultDTO;
 import com.disertatie.account.feign.ClientFeignResource;
 import com.disertatie.account.model.Account;
 import com.disertatie.account.repository.AccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,8 +28,6 @@ public class AccountService {
     private ClientFeignResource clientFeignResource;
     private OperationService operationService;
 
-
-    @Autowired
     public AccountService(AccountRepository accountRepository, ClientFeignResource clientFeignResource,
                           OperationService operationService) {
         this.accountRepository = accountRepository;
@@ -55,9 +51,9 @@ public class AccountService {
         return new PageImpl<>(accounts, pageRequest, pageResult.getTotalElements());
     }
 
-    public AccountDTO createAccount(@RequestBody AccountDTO account, Principal principal) {
+    public AccountDTO createAccount(@RequestBody AccountDTO account) {
 
-        ClientDTO clientDTO = getClient(principal);
+        ClientDTO clientDTO = getAuthenticatedUser();
         Account newAccount = new Account()
                 .setAmount(account.getAmount())
                 .setName(account.getName())
@@ -97,7 +93,7 @@ public class AccountService {
         return new AccountDTO(updateAccount);
     }
 
-    public ResultDTO depositMoney(int accountId, Double amount) throws IOException {
+    public ResultDTO depositMoney(int accountId, Double amount) {
 
         Account account = accountRepository.findAccountById(accountId);
         Double total = account.getAmount() + amount;
@@ -162,14 +158,6 @@ public class AccountService {
             return clientFeignResource.getClientByEmail(login);
         } else {
             return clientFeignResource.getClientByUsername(login);
-        }
-    }
-
-    public ClientDTO getClient(Principal principal) {
-        if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
-            return clientFeignResource.getClientByEmail(principal.getName());
-        } else {
-            return clientFeignResource.getClientByUsername(principal.getName());
         }
     }
 }

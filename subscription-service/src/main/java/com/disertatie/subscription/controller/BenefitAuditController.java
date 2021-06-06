@@ -28,8 +28,8 @@ public class BenefitAuditController {
     private BenefitAuditRepository benefitAuditRepository;
     private RevisionInfoRepository revisionInfoRepository;
 
-    @Autowired
-    public BenefitAuditController(BenefitService benefitService, BenefitAuditRepository benefitAuditRepository, RevisionInfoRepository revisionInfoRepository) {
+    public BenefitAuditController(BenefitService benefitService, BenefitAuditRepository benefitAuditRepository,
+                                  RevisionInfoRepository revisionInfoRepository) {
         this.benefitAuditRepository = benefitAuditRepository;
         this.benefitService = benefitService;
         this.revisionInfoRepository = revisionInfoRepository;
