@@ -48,6 +48,9 @@ ribbon:
     enabled: true
 
 zuul:
+  host:
+    connect-timeout-millis: 10000
+    socket-timeout-millis: 30000
   ignored-services: "*"
   routes:
     payment-service:
@@ -72,6 +75,7 @@ zuul:
       serviceId: subscription-service
   strip-prefix: true
   sensitive-headers:
+
 management:
   endpoints:
     web:
@@ -99,3 +103,11 @@ rest:
       allowed-origins: "*"
       max-age: 3600
     enabled: true
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000
