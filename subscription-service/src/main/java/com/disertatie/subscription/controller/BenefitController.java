@@ -28,8 +28,9 @@ public class BenefitController {
 
     @GetMapping("/user/{page}/{size}")
     public Page<BenefitDTO> getAllUserBenefitsPaged(@PathVariable(value = "page") int page,
-                                                    @PathVariable(value = "size") int size) {
-        return benefitService.getAllUSerBenefitsPaged(page, size);
+                                                    @PathVariable(value = "size") int size,
+                                                    Principal principal) {
+        return benefitService.getAllUSerBenefitsPaged(page, size, principal);
     }
 
     @GetMapping("/unpagedBenefits")
@@ -43,7 +44,7 @@ public class BenefitController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/createBenefit")
+    @PostMapping()
     public BenefitDTO createBenefit(@RequestBody BenefitDTO benefitDTO) {
         return benefitService.createBenefit(benefitDTO);
     }

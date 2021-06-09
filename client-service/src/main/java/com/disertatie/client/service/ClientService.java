@@ -59,7 +59,7 @@ public class ClientService {
             client = clientRepository.findByUsername(principal.getName());
         }
 
-        ClientDTO clientDTO = new ClientDTO()
+        return new ClientDTO()
                 .setId(client.getId())
                 .setAddress(client.getAddress())
                 .setCnp(client.getCnp())
@@ -70,7 +70,6 @@ public class ClientService {
                 .setStatus(client.getStatus())
                 .setUsername(client.getUsername())
                 .setSubscriptionId(client.getSubscriptionId());
-        return clientDTO;
     }
 
     public ResultDTO deactivateClient(Integer id) {

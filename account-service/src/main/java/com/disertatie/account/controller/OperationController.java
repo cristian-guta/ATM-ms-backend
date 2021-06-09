@@ -19,8 +19,9 @@ public class OperationController {
 
     @GetMapping("/{page}/{size}")
     public Page<OperationDTO> getAll(@PathVariable(value = "page") int page,
-                                     @PathVariable(value = "size") int size) {
-        return operationService.getAllOperations(page, size);
+                                     @PathVariable(value = "size") int size,
+                                     Principal principal) {
+        return operationService.getAllOperations(page, size, principal);
     }
 
     @GetMapping("/{id}")

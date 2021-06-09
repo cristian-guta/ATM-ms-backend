@@ -8,12 +8,9 @@ import com.disertatie.subscription.model.Benefit;
 import com.disertatie.subscription.model.Subscription;
 import com.disertatie.subscription.repository.BenefitRepository;
 import com.disertatie.subscription.repository.SubscriptionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -61,10 +58,16 @@ public class BenefitService {
         return new PageImpl<>(benefits, pageRequest, pageResult.getTotalElements());
     }
 
-    public Page<BenefitDTO> getAllUSerBenefitsPaged(int page, int size) {
+    public Page<BenefitDTO> getAllUSerBenefitsPaged(int page, int size, Principal principal) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        ClientDTO client = getAuthenticatedUser();
+        ClientDTO client = new ClientDTO();
+
+        if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
+            client = clientFeignResource.getClientByEmail(principal.getName());
+        } else {
+            client = clientFeignResource.getClientByUsername(principal.getName());
+        }
         Subscription subscription = subscriptionRepository.getById(client.getSubscriptionId());
         Page<Benefit> pageResult = benefitRepository.findPagedBySubId(subscription.getId(), pageRequest);
         List<BenefitDTO> benefits = pageResult
@@ -109,15 +112,5 @@ public class BenefitService {
         benefitRepository.save(benefit);
 
         return new BenefitDTO(benefit);
-    }
-
-    public ClientDTO getAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String login = authentication.getName();
-        if (clientFeignResource.getClientByUsername(login) == null) {
-            return clientFeignResource.getClientByEmail(login);
-        } else {
-            return clientFeignResource.getClientByUsername(login);
-        }
     }
 }

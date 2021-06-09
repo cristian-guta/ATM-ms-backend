@@ -12,8 +12,6 @@ import com.disertatie.account.repository.OperationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -47,10 +45,16 @@ public class OperationService {
         }
     }
 
-    public Page<OperationDTO> getAllOperations(int page, int size) {
+    public Page<OperationDTO> getAllOperations(int page, int size, Principal principal) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        ClientDTO client = getAuthenticatedUser();
+        ClientDTO client = new ClientDTO();
+
+        if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
+            client = clientFeignResource.getClientByEmail(principal.getName());
+        } else {
+            client = clientFeignResource.getClientByUsername(principal.getName());
+        }
 
         Page<Operation> pageResult;
         RoleDTO role = roleFeignResource.getRoleById(client.getRoleId());
@@ -88,16 +92,6 @@ public class OperationService {
 //            emailService.createPDF(operation, principal, null);
         }
         operationRepository.save(operation);
-    }
-
-    public ClientDTO getAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String login = authentication.getName();
-        if (clientFeignResource.getClientByUsername(login) == null) {
-            return clientFeignResource.getClientByEmail(login);
-        } else {
-            return clientFeignResource.getClientByUsername(login);
-        }
     }
 
 }

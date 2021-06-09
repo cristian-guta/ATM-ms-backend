@@ -22,6 +22,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.User;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -49,19 +52,14 @@ public class OAuthController {
 
     @Autowired
     AuthenticationManager authenticationManager;
-
-    @Autowired
-    private ClientRepository clientRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-
     @Autowired
     JwtTokenUtil jwtTokenUtil;
-
+    @Autowired
+    private ClientRepository clientRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
 
     @PostMapping("/google")
     public ResponseEntity<TokenDTO> google(@RequestBody TokenDTO tokenDto) throws IOException {
@@ -78,6 +76,20 @@ public class OAuthController {
 
         } else
             client = clientRepository.findClientByEmail(payload.getEmail());
+        TokenDTO tokenRes = login(client);
+        return new ResponseEntity(tokenRes, HttpStatus.OK);
+    }
+
+    @PostMapping("/facebook")
+    public ResponseEntity<TokenDTO> facebook(@RequestBody TokenDTO tokenDto) throws IOException {
+        Facebook facebook = new FacebookTemplate(tokenDto.getValue());
+        final String[] fields = {"email", "picture"};
+        User user = facebook.fetchObject("me", User.class, fields);
+        Client client = new Client();
+        if (clientRepository.findClientByEmail(user.getEmail()) != null)
+            client = clientRepository.findClientByEmail(user.getEmail());
+        else
+            client = saveClient(user.getEmail());
         TokenDTO tokenRes = login(client);
         return new ResponseEntity(tokenRes, HttpStatus.OK);
     }

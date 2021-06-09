@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/accounts")
@@ -37,8 +38,8 @@ public class AccountController {
     }
 
     @PostMapping
-    public AccountDTO createAccount(@RequestBody AccountDTO newAccount) {
-        return accountService.createAccount(newAccount);
+    public AccountDTO createAccount(@RequestBody AccountDTO newAccount, Principal principal) {
+        return accountService.createAccount(newAccount, principal);
     }
 
     @PutMapping("/{id}")
@@ -47,22 +48,30 @@ public class AccountController {
     }
 
     @PutMapping("/withdraw/{id}/{amount}")
-    public ResultDTO withdrawMoney(@PathVariable(value = "id") int accountId, @PathVariable(value = "amount") Double amount) throws IOException {
-        return accountService.withdrawMoney(accountId, amount);
+    public ResultDTO withdrawMoney(@PathVariable(value = "id") int accountId, @PathVariable(value = "amount") Double amount, Principal principal) throws IOException {
+        return accountService.withdrawMoney(accountId, amount, principal);
     }
 
     @PutMapping("/deposit/{id}/{amount}")
-    public ResultDTO depositMoney(@PathVariable(value = "id") int accountId, @PathVariable(value = "amount") Double amount) {
-        return accountService.depositMoney(accountId, amount);
+    public ResultDTO depositMoney(@PathVariable(value = "id") int accountId, @PathVariable(value = "amount") Double amount, Principal principal) {
+        return accountService.depositMoney(accountId, amount, principal);
     }
 
-    @DeleteMapping("/{id}")
-    public ResultDTO deleteAccount(@PathVariable(value = "id") int id) {
-        return accountService.deleteAccount(id);
+//    @DeleteMapping("/{id}")
+//    public ResultDTO deleteAccount(@PathVariable(value = "id") int id) {
+//        return accountService.deleteAccount(id);
+//    }
+
+    @DeleteMapping
+    public ResultDTO deleteAccount(@RequestParam(value = "id") int id) {
+        return this.accountService.deleteAccount(id);
     }
 
     @PutMapping("/transfer/{senderAccountId}/{receiverAccountId}/{amount}")
-    public ResultDTO transferMoney(@PathVariable(value = "senderAccountId") int senderAccountId, @PathVariable(value = "receiverAccountId") int receiverAccountId, @PathVariable(value = "amount") Double amount) throws IOException {
-        return accountService.transferMoney(senderAccountId, receiverAccountId, amount);
+    public ResultDTO transferMoney(@PathVariable(value = "senderAccountId") int senderAccountId,
+                                   @PathVariable(value = "receiverAccountId") int receiverAccountId,
+                                   @PathVariable(value = "amount") Double amount,
+                                   Principal principal) throws IOException {
+        return accountService.transferMoney(senderAccountId, receiverAccountId, amount, principal);
     }
 }

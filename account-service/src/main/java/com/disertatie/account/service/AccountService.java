@@ -10,13 +10,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,14 +50,20 @@ public class AccountService {
         return new PageImpl<>(accounts, pageRequest, pageResult.getTotalElements());
     }
 
-    public AccountDTO createAccount(@RequestBody AccountDTO account) {
+    public AccountDTO createAccount(@RequestBody AccountDTO account, Principal principal) {
 
-        ClientDTO clientDTO = getAuthenticatedUser();
+        ClientDTO client = new ClientDTO();
+
+        if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
+            client = clientFeignResource.getClientByEmail(principal.getName());
+        } else {
+            client = clientFeignResource.getClientByUsername(principal.getName());
+        }
         Account newAccount = new Account()
                 .setAmount(account.getAmount())
                 .setName(account.getName())
                 .setDetails(account.getDetails())
-                .setClientId(clientDTO.getId());
+                .setClientId(client.getId());
         System.out.println(account);
         return new AccountDTO(accountRepository.save(newAccount));
     }
@@ -93,19 +98,25 @@ public class AccountService {
         return new AccountDTO(updateAccount);
     }
 
-    public ResultDTO depositMoney(int accountId, Double amount) {
+    public ResultDTO depositMoney(int accountId, Double amount, Principal principal) {
 
         Account account = accountRepository.findAccountById(accountId);
         Double total = account.getAmount() + amount;
         account.setAmount(total);
 
         accountRepository.save(account);
+        ClientDTO clientDTO = new ClientDTO();
+        if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
+            clientDTO = clientFeignResource.getClientByEmail(principal.getName());
+        } else {
+            clientDTO = clientFeignResource.getClientByUsername(principal.getName());
+        }
 
-        operationService.createOperation(getAuthenticatedUser(), account.getId(), 0, "DEPOSIT", amount);
+        operationService.createOperation(clientDTO, account.getId(), 0, "DEPOSIT", amount);
         return new ResultDTO().setStatus(true).setMessage("Money deposed!");
     }
 
-    public ResultDTO withdrawMoney(int accountId, Double amount) throws IOException {
+    public ResultDTO withdrawMoney(int accountId, Double amount, Principal principal) throws IOException {
 
         Account account = accountRepository.findAccountById(accountId);
         try {
@@ -115,7 +126,13 @@ public class AccountService {
             } else {
                 account.setAmount(total);
                 accountRepository.save(account);
-                ClientDTO clientDTO = getAuthenticatedUser();
+                ClientDTO clientDTO = new ClientDTO();
+                if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
+                    clientDTO = clientFeignResource.getClientByEmail(principal.getName());
+                } else {
+                    clientDTO = clientFeignResource.getClientByUsername(principal.getName());
+                }
+
                 operationService.createOperation(clientDTO, accountId, 0, "WITHDRAW", amount);
             }
         } catch (RuntimeException exc) {
@@ -124,7 +141,7 @@ public class AccountService {
         return new ResultDTO().setStatus(true).setMessage("Money deposed!");
     }
 
-    public ResultDTO transferMoney(int senderAccountId, int receiverAccountId, Double amount) throws IOException {
+    public ResultDTO transferMoney(int senderAccountId, int receiverAccountId, Double amount, Principal principal) throws IOException {
 
         Account account = accountRepository.findAccountById(senderAccountId);
         Account toSendTo = accountRepository.findAccountById(receiverAccountId);
@@ -138,9 +155,15 @@ public class AccountService {
 
                 Double receiverAmount = toSendTo.getAmount() + amount;
                 toSendTo.setAmount(receiverAmount);
+                ClientDTO clientDTO = new ClientDTO();
+                if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
+                    clientDTO = clientFeignResource.getClientByEmail(principal.getName());
+                } else {
+                    clientDTO = clientFeignResource.getClientByUsername(principal.getName());
+                }
 
                 accountRepository.save(toSendTo);
-                operationService.createOperation(getAuthenticatedUser(), senderAccountId, receiverAccountId, "TRANSFER", amount);
+                operationService.createOperation(clientDTO, senderAccountId, receiverAccountId, "TRANSFER", amount);
 
             } else {
                 throw new RuntimeException("You want to transfer more than you own! Throwing exception...");
@@ -149,15 +172,5 @@ public class AccountService {
             exc.printStackTrace();
         }
         return new ResultDTO().setStatus(true).setMessage("Amount successfully transfered!");
-    }
-
-    public ClientDTO getAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String login = authentication.getName();
-        if (clientFeignResource.getClientByUsername(login) == null) {
-            return clientFeignResource.getClientByEmail(login);
-        } else {
-            return clientFeignResource.getClientByUsername(login);
-        }
     }
 }

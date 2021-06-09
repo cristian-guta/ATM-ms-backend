@@ -25,8 +25,8 @@ public class SubscriptionController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/getSubscription")
-    public SubscriptionDTO getCurrentSubscription() {
-        return subscriptionService.getClientSubscription();
+    public SubscriptionDTO getCurrentSubscription(Principal principal) {
+        return subscriptionService.getClientSubscription(principal);
     }
 
     @PostMapping("/createSubscription")
@@ -47,14 +47,14 @@ public class SubscriptionController {
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/activateSubscription/{id}")
-    public ResultDTO activateSubscription(@PathVariable(value = "id") int id) throws IOException {
-        return subscriptionService.activateSubscription(id);
+    public ResultDTO activateSubscription(@PathVariable(value = "id") int id, Principal principal) throws IOException {
+        return subscriptionService.activateSubscription(id, principal);
     }
 
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/cancelSubscription")
-    public ResultDTO cancelSubscription() {
-        return subscriptionService.cancelSubscription();
+    public ResultDTO cancelSubscription(Principal principal) {
+        return subscriptionService.cancelSubscription(principal);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

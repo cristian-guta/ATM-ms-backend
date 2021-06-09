@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,8 +35,14 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
-    public ReviewDTO createReview(ReviewDTO review) {
-        ClientDTO client = getAuthenticatedUser();
+    public ReviewDTO createReview(ReviewDTO review, Principal principal) {
+        ClientDTO client = new ClientDTO();
+
+        if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
+            client = clientFeignResource.getClientByEmail(principal.getName());
+        } else {
+            client = clientFeignResource.getClientByUsername(principal.getName());
+        }
 
         Review newReview = new Review()
                 .setClientId(client.getId())
@@ -71,15 +78,5 @@ public class ReviewService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(reviews, pageRequest, pageResult.getTotalElements());
-    }
-
-    public ClientDTO getAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String login = authentication.getName();
-        if (clientFeignResource.getClientByUsername(login) == null) {
-            return clientFeignResource.getClientByEmail(login);
-        } else {
-            return clientFeignResource.getClientByUsername(login);
-        }
     }
 }

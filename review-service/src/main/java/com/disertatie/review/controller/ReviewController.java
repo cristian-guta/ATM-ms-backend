@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -29,8 +30,8 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ReviewDTO create(@RequestBody ReviewDTO review) {
-        return reviewService.createReview(review);
+    public ReviewDTO create(@RequestBody ReviewDTO review, Principal principal) {
+        return reviewService.createReview(review, principal);
     }
 
     @DeleteMapping("/{id}")
