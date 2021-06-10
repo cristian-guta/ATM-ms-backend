@@ -35,7 +35,7 @@ public class ClientService {
                 .setEmail(updatedClient.getEmail())
                 .setUsername(updatedClient.getUsername())
                 .setSubscriptionId(updatedClient.getSubscriptionId());
-        return new ClientDTO(clientRepository.save(client));
+        return ClientDTO.getDto(clientRepository.save(client));
     }
 
     public Page<ClientDTO> getAll(int page, int size) {
@@ -45,7 +45,7 @@ public class ClientService {
 
         List<ClientDTO> clients = pageResult
                 .stream()
-                .map(ClientDTO::new)
+                .map(ClientDTO::getDto)
                 .collect(Collectors.toList());
         return new PageImpl<>(clients, pageRequest, pageResult.getTotalElements());
     }
@@ -59,17 +59,7 @@ public class ClientService {
             client = clientRepository.findByUsername(principal.getName());
         }
 
-        return new ClientDTO()
-                .setId(client.getId())
-                .setAddress(client.getAddress())
-                .setCnp(client.getCnp())
-                .setEmail(client.getEmail())
-                .setFirstName(client.getFirstName())
-                .setLastName(client.getLastName())
-                .setPassword(client.getPassword())
-                .setStatus(client.getStatus())
-                .setUsername(client.getUsername())
-                .setSubscriptionId(client.getSubscriptionId());
+        return ClientDTO.getDto(client);
     }
 
     public ResultDTO deactivateClient(Integer id) {
@@ -93,19 +83,19 @@ public class ClientService {
 
     public List<ClientDTO> findAll() {
         return clientRepository.findAll().stream()
-                .map(ClientDTO::new)
+                .map(ClientDTO::getDto)
                 .collect(Collectors.toList());
     }
 
     public ClientDTO findByUsername(String username) {
         if (clientRepository.findByUsername(username) != null) {
-            return new ClientDTO(clientRepository.findByUsername(username));
+            return ClientDTO.getDto(clientRepository.findByUsername(username));
         } else {
-            return new ClientDTO(clientRepository.findClientByEmail(username));
+            return ClientDTO.getDto(clientRepository.findClientByEmail(username));
         }
     }
 
     public ClientDTO findByEmail(String email) {
-        return new ClientDTO(clientRepository.findClientByEmail(email));
+        return ClientDTO.getDto(clientRepository.findClientByEmail(email));
     }
 }

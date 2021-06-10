@@ -44,7 +44,7 @@ public class SubscriptionService {
                 .setPrice(newSubscription.getPrice())
                 .setBenefits(benefits);
 
-        return new SubscriptionDTO(subscriptionRepository.save(subscription));
+        return SubscriptionDTO.getDto(subscriptionRepository.save(subscription));
     }
 
     public SubscriptionDTO getClientSubscription(Principal principal) {
@@ -112,7 +112,7 @@ public class SubscriptionService {
         subscriptionRepository.save(updateSubscription);
 
         log.info("Subscription updated...");
-        return new SubscriptionDTO(updateSubscription);
+        return SubscriptionDTO.getDto(updateSubscription);
     }
 
     public ResultDTO activateSubscription(int subId, Principal principal) throws IOException {

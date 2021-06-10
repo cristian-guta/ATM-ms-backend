@@ -3,12 +3,14 @@ package com.disertatie.client.dto;
 import com.disertatie.client.model.AuthProvider;
 import com.disertatie.client.model.Client;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
 @AllArgsConstructor
+@Builder
 public class ClientDTO {
 
     private Integer id;
@@ -43,5 +45,23 @@ public class ClientDTO {
 
     public ClientDTO() {
 
+    }
+
+    public static ClientDTO getDto(Client client){
+        return ClientDTO.builder()
+                .id(client.getId())
+                .username(client.getUsername())
+                .firstName(client.getFirstName())
+                .lastName(client.getLastName())
+                .cnp(client.getCnp())
+                .address(client.getAddress())
+                .email(client.getEmail())
+                .password(client.getPassword())
+                .status(client.getStatus())
+                .roleId(client.getRoleId())
+                .subscriptionId(client.getSubscriptionId())
+                .imageModelId(client.getImageModelId())
+                .authProvider(client.getAuthProvider())
+                .build();
     }
 }

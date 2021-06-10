@@ -1,5 +1,7 @@
 package com.disertatie.account.model;
 
+import com.disertatie.account.dto.AccountDTO;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -10,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @Accessors(chain = true)
 @Entity
 @Table(name = "account")
+@Builder
 public class Account {
 
     @Id
@@ -37,5 +40,14 @@ public class Account {
         this.amount = amount;
         this.details = details;
         this.clientId = clientId;
+    }
+
+    public static Account getEntity(AccountDTO accountDTO) {
+        return Account.builder()
+                .amount(accountDTO.getAmount())
+                .details(accountDTO.getDetails())
+                .name(accountDTO.getName())
+                .clientId(accountDTO.getClientId())
+                .id(accountDTO.getId()).build();
     }
 }

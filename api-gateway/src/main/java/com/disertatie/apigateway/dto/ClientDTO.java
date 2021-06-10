@@ -48,5 +48,6 @@ public class ClientDTO {
         this.imageModelId = imageModelId;
     }
 
-    public ClientDTO(){}
+    public ClientDTO() {
+    }
 }

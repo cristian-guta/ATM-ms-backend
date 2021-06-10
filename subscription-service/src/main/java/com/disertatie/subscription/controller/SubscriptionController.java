@@ -29,7 +29,7 @@ public class SubscriptionController {
         return subscriptionService.getClientSubscription(principal);
     }
 
-    @PostMapping("/createSubscription")
+    @PostMapping
     public SubscriptionDTO createSubscription(@RequestBody SubscriptionDTO newSubscription) {
         return subscriptionService.createSubscription(newSubscription);
     }

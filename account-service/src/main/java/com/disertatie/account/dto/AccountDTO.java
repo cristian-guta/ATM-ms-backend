@@ -2,6 +2,7 @@ package com.disertatie.account.dto;
 
 import com.disertatie.account.model.Account;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -10,6 +11,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class AccountDTO {
 
     private int id;
@@ -18,12 +20,13 @@ public class AccountDTO {
     private String details;
     private int clientId;
 
-    public AccountDTO(Account account) {
-        this.id = account.getId();
-        this.name = account.getName();
-        this.amount = account.getAmount();
-        this.details = account.getDetails();
-        this.clientId = account.getClientId();
+    public static AccountDTO getDTO(Account account) {
+        return AccountDTO.builder()
+                .amount(account.getAmount())
+                .name(account.getName())
+                .details(account.getDetails())
+                .id(account.getId())
+                .clientId(account.getClientId()).build();
     }
 
 }

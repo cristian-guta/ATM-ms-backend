@@ -53,7 +53,7 @@ public class BenefitService {
         Page<Benefit> pageResult = benefitRepository.findAll(pageRequest);
         List<BenefitDTO> benefits = pageResult
                 .stream()
-                .map(BenefitDTO::new)
+                .map(BenefitDTO::getDto)
                 .collect(Collectors.toList());
         return new PageImpl<>(benefits, pageRequest, pageResult.getTotalElements());
     }
@@ -72,7 +72,7 @@ public class BenefitService {
         Page<Benefit> pageResult = benefitRepository.findPagedBySubId(subscription.getId(), pageRequest);
         List<BenefitDTO> benefits = pageResult
                 .stream()
-                .map(BenefitDTO::new)
+                .map(BenefitDTO::getDto)
                 .collect(Collectors.toList());
         return new PageImpl<>(benefits, pageRequest, pageResult.getTotalElements());
     }
@@ -96,7 +96,7 @@ public class BenefitService {
                 .setId(benefitDTO.getId())
                 .setDescription(benefitDTO.getDescription());
 
-        return new BenefitDTO(benefitRepository.save(benefit));
+        return BenefitDTO.getDto(benefitRepository.save(benefit));
     }
 
     public ResultDTO deleteBenefit(int id) {
@@ -111,6 +111,6 @@ public class BenefitService {
 
         benefitRepository.save(benefit);
 
-        return new BenefitDTO(benefit);
+        return BenefitDTO.getDto(benefit);
     }
 }

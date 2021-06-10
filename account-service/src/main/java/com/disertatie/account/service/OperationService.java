@@ -39,7 +39,7 @@ public class OperationService {
         Optional<Operation> optionalOperation = operationRepository.findById(Integer.parseInt(id));
         if (optionalOperation.isPresent()) {
             Operation operation = optionalOperation.get();
-            return new OperationDTO(operation);
+            return OperationDTO.getDTO(operation);
         } else {
             return new OperationDTO();
         }
@@ -66,7 +66,7 @@ public class OperationService {
 
         List<OperationDTO> operations = pageResult
                 .stream()
-                .map(OperationDTO::new)
+                .map(OperationDTO::getDTO)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(operations, pageRequest, pageResult.getTotalElements());

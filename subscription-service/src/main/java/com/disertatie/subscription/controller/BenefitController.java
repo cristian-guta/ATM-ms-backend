@@ -50,15 +50,9 @@ public class BenefitController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/deleteBenefit/{id}")
-    public ResultDTO deleteBenefit(@PathVariable(value = "id") int id) {
+    @DeleteMapping
+    public ResultDTO deleteBenefit(@RequestParam(value = "id") int id) {
         return benefitService.deleteBenefit(id);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/updateBenefit/{id}")
-    public BenefitDTO updateBenefin(@PathVariable("id") int benefitId, @RequestBody BenefitDTO benefitDTO) {
-        return benefitService.updateBenefit(benefitId, benefitDTO);
     }
 
 }

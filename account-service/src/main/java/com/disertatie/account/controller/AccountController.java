@@ -20,13 +20,13 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @GetMapping("/client/{id}")
-    public AccountDTO getByCurrentCLient(@PathVariable("id") int id) {
+    @GetMapping("/client")
+    public AccountDTO getByCurrentCLient(@RequestParam(value = "id") int id) {
         return accountService.getByCurrentClient(id);
     }
 
-    @GetMapping("/{id}")
-    public AccountDTO getAccountById(@PathVariable(value = "id") int id) {
+    @GetMapping()
+    public AccountDTO getAccountById(@RequestParam(value = "id") int id) {
         return accountService.getAccountById(id);
     }
 
@@ -38,8 +38,8 @@ public class AccountController {
     }
 
     @PostMapping
-    public AccountDTO createAccount(@RequestBody AccountDTO newAccount, Principal principal) {
-        return accountService.createAccount(newAccount, principal);
+    public AccountDTO createAccount(@RequestBody AccountDTO newAccount) {
+        return accountService.createAccount(newAccount);
     }
 
     @PutMapping("/{id}")
@@ -47,30 +47,31 @@ public class AccountController {
         return accountService.updateAccount(id, accountDTO);
     }
 
-    @PutMapping("/withdraw/{id}/{amount}")
-    public ResultDTO withdrawMoney(@PathVariable(value = "id") int accountId, @PathVariable(value = "amount") Double amount, Principal principal) throws IOException {
-        return accountService.withdrawMoney(accountId, amount, principal);
+    @PutMapping("/withdraw")
+    public ResultDTO withdrawMoney(@RequestParam(value = "id") int id,
+                                   @RequestParam(value = "amount") double amount,
+                                   Principal principal) throws IOException {
+        System.out.println(id + " " + amount);
+
+        return accountService.withdrawMoney(id, amount, principal);
     }
 
-    @PutMapping("/deposit/{id}/{amount}")
-    public ResultDTO depositMoney(@PathVariable(value = "id") int accountId, @PathVariable(value = "amount") Double amount, Principal principal) {
+    @PutMapping("/deposit")
+    public ResultDTO depositMoney(@RequestParam(value = "id") int accountId,
+                                  @RequestParam(value = "amount") double amount,
+                                  Principal principal) {
         return accountService.depositMoney(accountId, amount, principal);
     }
-
-//    @DeleteMapping("/{id}")
-//    public ResultDTO deleteAccount(@PathVariable(value = "id") int id) {
-//        return accountService.deleteAccount(id);
-//    }
 
     @DeleteMapping
     public ResultDTO deleteAccount(@RequestParam(value = "id") int id) {
         return this.accountService.deleteAccount(id);
     }
 
-    @PutMapping("/transfer/{senderAccountId}/{receiverAccountId}/{amount}")
-    public ResultDTO transferMoney(@PathVariable(value = "senderAccountId") int senderAccountId,
-                                   @PathVariable(value = "receiverAccountId") int receiverAccountId,
-                                   @PathVariable(value = "amount") Double amount,
+    @PutMapping("/transfer")
+    public ResultDTO transferMoney(@RequestParam(value = "senderId") int senderAccountId,
+                                   @RequestParam(value = "receiverId") int receiverAccountId,
+                                   @RequestParam(value = "amount") double amount,
                                    Principal principal) throws IOException {
         return accountService.transferMoney(senderAccountId, receiverAccountId, amount, principal);
     }

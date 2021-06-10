@@ -1,10 +1,7 @@
 package com.disertatie.review.dto;
 
 import com.disertatie.review.model.Review;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 @Data
@@ -12,16 +9,19 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 public class ReviewDTO {
     private int id;
     private String title;
     private String description;
     private int clientId;
 
-    public ReviewDTO(Review review) {
-        this.id = review.getId();
-        this.title = review.getTitle();
-        this.description = review.getDescription();
-        this.clientId = review.getClientId();
+    public static ReviewDTO getDto(Review review) {
+        return ReviewDTO.builder()
+                .id(review.getId())
+                .title(review.getTitle())
+                .description(review.getDescription())
+                .clientId(review.getClientId())
+                .build();
     }
 }

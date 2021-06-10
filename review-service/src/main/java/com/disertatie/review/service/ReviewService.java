@@ -9,8 +9,6 @@ import com.disertatie.review.repository.ReviewRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -31,7 +29,7 @@ public class ReviewService {
 
     public List<ReviewDTO> getAllByClientId(int clientId) {
         return reviewRepository.findByClientId(clientId).stream()
-                .map(ReviewDTO::new)
+                .map(ReviewDTO::getDto)
                 .collect(Collectors.toList());
     }
 
@@ -49,7 +47,7 @@ public class ReviewService {
                 .setDescription(review.getDescription())
                 .setTitle(review.getTitle());
 
-        return new ReviewDTO(reviewRepository.save(newReview));
+        return ReviewDTO.getDto(reviewRepository.save(newReview));
     }
 
     public void runPythonScript() throws IOException {
@@ -74,7 +72,7 @@ public class ReviewService {
 
         List<ReviewDTO> reviews = pageResult.
                 stream()
-                .map(ReviewDTO::new)
+                .map(ReviewDTO::getDto)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(reviews, pageRequest, pageResult.getTotalElements());

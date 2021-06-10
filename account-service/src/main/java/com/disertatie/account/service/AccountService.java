@@ -37,7 +37,7 @@ public class AccountService {
     public AccountDTO getByCurrentClient(int id) {
         ClientDTO client = clientFeignResource.getClientById(id);
         Optional<Account> account = accountRepository.findAccountByClientId(client.getId());
-        return account.map(AccountDTO::new).orElseGet(AccountDTO::new);
+        return account.map(AccountDTO::getDTO).orElseGet(AccountDTO::new);
     }
 
     public Page<AccountDTO> getAllAccounts(int page, int size) {
@@ -45,27 +45,16 @@ public class AccountService {
         Page<Account> pageResult = accountRepository.findAll(pageRequest);
         List<AccountDTO> accounts = pageResult
                 .stream()
-                .map(AccountDTO::new)
+                .map(AccountDTO::getDTO)
                 .collect(Collectors.toList());
         return new PageImpl<>(accounts, pageRequest, pageResult.getTotalElements());
     }
 
-    public AccountDTO createAccount(@RequestBody AccountDTO account, Principal principal) {
+    public AccountDTO createAccount(@RequestBody AccountDTO account) {
 
-        ClientDTO client = new ClientDTO();
+        Account newAccount = Account.getEntity(account);
 
-        if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
-            client = clientFeignResource.getClientByEmail(principal.getName());
-        } else {
-            client = clientFeignResource.getClientByUsername(principal.getName());
-        }
-        Account newAccount = new Account()
-                .setAmount(account.getAmount())
-                .setName(account.getName())
-                .setDetails(account.getDetails())
-                .setClientId(client.getId());
-        System.out.println(account);
-        return new AccountDTO(accountRepository.save(newAccount));
+        return AccountDTO.getDTO(accountRepository.save(newAccount));
     }
 
     public ResultDTO deleteAccount(int id) {
@@ -76,12 +65,7 @@ public class AccountService {
     public AccountDTO getAccountById(int id) {
         Account account = accountRepository.findAccountById(id);
         if (account != null) {
-            return new AccountDTO()
-                    .setId(account.getId())
-                    .setDetails(account.getDetails())
-                    .setClientId(account.getClientId())
-                    .setAmount(account.getAmount())
-                    .setName(account.getName());
+            return AccountDTO.getDTO(account);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found!");
         }
@@ -93,9 +77,8 @@ public class AccountService {
                 .setName(accountDTO.getName())
                 .setAmount(accountDTO.getAmount())
                 .setDetails(accountDTO.getDetails());
-        accountRepository.save(updateAccount);
 
-        return new AccountDTO(updateAccount);
+        return AccountDTO.getDTO(accountRepository.save(updateAccount));
     }
 
     public ResultDTO depositMoney(int accountId, Double amount, Principal principal) {
@@ -116,7 +99,7 @@ public class AccountService {
         return new ResultDTO().setStatus(true).setMessage("Money deposed!");
     }
 
-    public ResultDTO withdrawMoney(int accountId, Double amount, Principal principal) throws IOException {
+    public ResultDTO withdrawMoney(int accountId, double amount, Principal principal) throws IOException {
 
         Account account = accountRepository.findAccountById(accountId);
         try {

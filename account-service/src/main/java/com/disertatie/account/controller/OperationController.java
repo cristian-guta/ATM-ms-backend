@@ -23,9 +23,4 @@ public class OperationController {
                                      Principal principal) {
         return operationService.getAllOperations(page, size, principal);
     }
-
-    @GetMapping("/{id}")
-    public OperationDTO getOperationById(@PathVariable(value = "id") String id) {
-        return operationService.findOperationById(id);
-    }
 }
