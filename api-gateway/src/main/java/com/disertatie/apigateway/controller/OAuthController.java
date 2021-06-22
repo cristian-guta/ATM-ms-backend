@@ -72,7 +72,7 @@ public class OAuthController {
         final GoogleIdToken.Payload payload = googleIdToken.getPayload();
         Client client = new Client();
         if (clientRepository.findClientByEmail(payload.getEmail()) == null) {
-            client = saveClient(payload.getEmail());
+            client = saveClient(payload.getEmail(), AuthProvider.google);
 
         } else
             client = clientRepository.findClientByEmail(payload.getEmail());
@@ -89,7 +89,7 @@ public class OAuthController {
         if (clientRepository.findClientByEmail(user.getEmail()) != null)
             client = clientRepository.findClientByEmail(user.getEmail());
         else
-            client = saveClient(user.getEmail());
+            client = saveClient(user.getEmail(), AuthProvider.facebook);
         TokenDTO tokenRes = login(client);
         return new ResponseEntity(tokenRes, HttpStatus.OK);
     }
@@ -108,11 +108,11 @@ public class OAuthController {
         return tokenDto;
     }
 
-    private Client saveClient(String email) {
+    private Client saveClient(String email, AuthProvider authProvider) {
         Client client = new Client();
         client.setEmail(email);
         client.setPassword(passwordEncoder.encode(secretPsw));
-        client.setAuthProvider(AuthProvider.google);
+        client.setAuthProvider(authProvider);
         Role userRole = roleRepository.findByName("USER");
         client.setRole(userRole);
         client.setAuthProvider(AuthProvider.google);

@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 @Setter
 @NoArgsConstructor
 @Builder
+@AllArgsConstructor
 public class ReviewDTO {
     private int id;
     private String title;

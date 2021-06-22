@@ -127,12 +127,13 @@ public class ImageService {
 
     public ResultDTO uploadImageToAwsS3(MultipartFile multipartFile, Principal principal) throws IOException {
         Client client = clientRepository.findByUsername(principal.getName());
-        OutputStream fileOutputStream = new FileOutputStream(client.getUsername() + ".jpg");
+        int nr = clientEmotionRepository.findAll().size();
+        OutputStream fileOutputStream = new FileOutputStream(client.getUsername() + nr + ".jpg");
 
         fileOutputStream.write(multipartFile.getBytes());
         fileOutputStream.flush();
         fileOutputStream.close();
-        String fileName = client.getUsername() + ".jpg";
+        String fileName = client.getUsername() + nr + ".jpg";
         String bucket = "atmfmibucket";
         Regions clientRegion = Regions.EU_CENTRAL_1;
         File fileToUpload = new File(fileName);

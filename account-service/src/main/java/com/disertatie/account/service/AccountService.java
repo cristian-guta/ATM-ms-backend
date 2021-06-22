@@ -81,7 +81,7 @@ public class AccountService {
         return AccountDTO.getDTO(accountRepository.save(updateAccount));
     }
 
-    public ResultDTO depositMoney(int accountId, Double amount, Principal principal) {
+    public ResultDTO depositMoney(int accountId, Double amount, Principal principal) throws IOException {
 
         Account account = accountRepository.findAccountById(accountId);
         Double total = account.getAmount() + amount;

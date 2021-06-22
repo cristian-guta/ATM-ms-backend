@@ -59,7 +59,7 @@ public class AccountController {
     @PutMapping("/deposit")
     public ResultDTO depositMoney(@RequestParam(value = "id") int accountId,
                                   @RequestParam(value = "amount") double amount,
-                                  Principal principal) {
+                                  Principal principal) throws IOException {
         return accountService.depositMoney(accountId, amount, principal);
     }
 

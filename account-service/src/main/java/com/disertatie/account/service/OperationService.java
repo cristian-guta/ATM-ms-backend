@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
@@ -26,13 +27,15 @@ public class OperationService {
     private ClientFeignResource clientFeignResource;
     private RoleFeignResource roleFeignResource;
     private AccountRepository accountRepository;
+    private EmailService emailService;
 
     public OperationService(OperationRepository operationRepository, ClientFeignResource clientFeignResource, RoleFeignResource roleFeignResource,
-                            AccountRepository accountRepository) {
+                            AccountRepository accountRepository, EmailService emailService) {
         this.operationRepository = operationRepository;
         this.clientFeignResource = clientFeignResource;
         this.roleFeignResource = roleFeignResource;
         this.accountRepository = accountRepository;
+        this.emailService = emailService;
     }
 
     public OperationDTO findOperationById(String id) {
@@ -72,7 +75,7 @@ public class OperationService {
         return new PageImpl<>(operations, pageRequest, pageResult.getTotalElements());
     }
 
-    public void createOperation(ClientDTO client, int accountId, int transferId, String type, Double amount) {
+    public void createOperation(ClientDTO client, int accountId, int transferId, String type, Double amount) throws IOException {
 
         LocalDate date = LocalDate.now();
         Account account = accountRepository.findAccountById(accountId);
@@ -86,10 +89,10 @@ public class OperationService {
         if (transferId != 0) {
             Account transfer = accountRepository.findAccountById(transferId);
             operation.setAccount(transfer);
-//            emailService.createPDF(operation, principal, transfer);
+            emailService.createPDF(operation, client, transfer);
         } else {
             operation.setAccount(account);
-//            emailService.createPDF(operation, principal, null);
+            emailService.createPDF(operation, client, null);
         }
         operationRepository.save(operation);
     }
