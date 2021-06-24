@@ -2,13 +2,17 @@ package com.disertatie.client.service;
 
 import com.disertatie.client.dto.ClientDTO;
 import com.disertatie.client.dto.ResultDTO;
+import com.disertatie.client.model.AuthProvider;
 import com.disertatie.client.model.Client;
 import com.disertatie.client.repository.ClientRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,14 +22,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ClientService {
 
     private ClientRepository clientRepository;
-
-    @Autowired
-    public ClientService(ClientRepository clientRepository) {
-        this.clientRepository = clientRepository;
-    }
+    private PasswordEncoder bcryptEncoder;
 
     public ClientDTO updateClient(int id, ClientDTO updatedClient) {
         Client client = clientRepository.getById(id)
@@ -97,5 +98,14 @@ public class ClientService {
 
     public ClientDTO findByEmail(String email) {
         return ClientDTO.getDto(clientRepository.findClientByEmail(email));
+    }
+
+    public ResultDTO create(ClientDTO clientDTO) {
+        Client client = Client.getEntity(clientDTO);
+        client.setPassword(bcryptEncoder.encode(client.getPassword()));
+        client.setAuthProvider(AuthProvider.local);
+        client.setStatus(false);
+        clientRepository.save(client);
+        return new ResultDTO().setMessage("New user created!").setStatus(true);
     }
 }

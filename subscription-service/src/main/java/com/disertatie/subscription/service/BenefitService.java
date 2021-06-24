@@ -8,6 +8,7 @@ import com.disertatie.subscription.model.Benefit;
 import com.disertatie.subscription.model.Subscription;
 import com.disertatie.subscription.repository.BenefitRepository;
 import com.disertatie.subscription.repository.SubscriptionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -16,14 +17,13 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class BenefitService {
 
     private BenefitRepository benefitRepository;
-    private Logger log = Logger.getLogger(BenefitService.class.getName());
     private SubscriptionRepository subscriptionRepository;
     private ClientFeignResource clientFeignResource;
 
@@ -37,10 +37,7 @@ public class BenefitService {
     public List<BenefitDTO> getAllBenefits() {
         List<BenefitDTO> benefits = new ArrayList<>();
         for (Benefit ben : benefitRepository.findAll()) {
-            BenefitDTO bnf = new BenefitDTO()
-                    .setId(ben.getId())
-                    .setDescription(ben.getDescription());
-            benefits.add(bnf);
+            benefits.add(BenefitDTO.getDto(ben));
         }
         return benefits;
     }
@@ -83,18 +80,13 @@ public class BenefitService {
 
         List<BenefitDTO> benefits = new ArrayList<>();
         benefitRepository.findBySubscriptionId(id).forEach(benefit -> {
-            BenefitDTO ben = new BenefitDTO().setId(benefit.getId())
-                    .setDescription(benefit.getDescription());
-
-            benefits.add(ben);
+            benefits.add(BenefitDTO.getDto(benefit));
         });
         return benefits.stream().distinct().collect(Collectors.toList());
     }
 
     public BenefitDTO createBenefit(BenefitDTO benefitDTO) {
-        Benefit benefit = new Benefit()
-                .setId(benefitDTO.getId())
-                .setDescription(benefitDTO.getDescription());
+        Benefit benefit = Benefit.getModel(benefitDTO);
 
         return BenefitDTO.getDto(benefitRepository.save(benefit));
     }
@@ -102,15 +94,5 @@ public class BenefitService {
     public ResultDTO deleteBenefit(int id) {
         benefitRepository.deleteById(id);
         return new ResultDTO().setStatus(true).setMessage("Benefit deleted.");
-    }
-
-    public BenefitDTO updateBenefit(int benefitId, BenefitDTO benefitDTO) {
-        Benefit benefit = benefitRepository.getById(benefitId);
-
-        benefit.setDescription(benefitDTO.getDescription());
-
-        benefitRepository.save(benefit);
-
-        return BenefitDTO.getDto(benefit);
     }
 }

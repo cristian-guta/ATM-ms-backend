@@ -7,7 +7,6 @@ import com.disertatie.client.repository.ClientRepository;
 import com.disertatie.client.service.ClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,13 +28,13 @@ public class ClientController {
         this.clientRepository = clientRepository;
     }
 
-    @GetMapping("/findAll")
+    @GetMapping
     public List<ClientDTO> findAll() {
         return clientService.findAll();
     }
 
-    @PutMapping("/update/{id}")
-    public ClientDTO updateClient(@PathVariable("id") int theId, @RequestBody ClientDTO updatedClient) {
+    @PutMapping("/update")
+    public ClientDTO updateClient(@RequestParam("id") int theId, @RequestBody ClientDTO updatedClient) {
         return clientService.updateClient(theId, updatedClient);
     }
 
@@ -51,13 +50,13 @@ public class ClientController {
         return clientRepository.getById(id);
     }
 
-    @GetMapping("/username/{username}")
-    public ClientDTO getByUsername(@PathVariable String username) {
+    @GetMapping("/username")
+    public ClientDTO getByUsername(@RequestParam("username") String username) {
         return clientService.findByUsername(username);
     }
 
-    @GetMapping("/email/{email}")
-    public ClientDTO getByEmail(@PathVariable String email) {
+    @GetMapping("/email")
+    public ClientDTO getByEmail(@RequestParam("email") String email) {
         return clientService.findByEmail(email);
     }
 
@@ -67,14 +66,19 @@ public class ClientController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/delete/{id}")
-    public ResultDTO deleteClient(@PathVariable("id") int theId) {
+    @PutMapping("/deactivate")
+    public ResultDTO deactivateClient(@RequestParam("id") int theId) {
         return clientService.deactivateClient(theId);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/activate/{id}")
-    public ResultDTO activateClient(@PathVariable(value = "id") Integer id) {
+    @PutMapping("/activate")
+    public ResultDTO activateClient(@RequestParam("id") Integer id) {
         return clientService.activateClient(id);
+    }
+
+    @PostMapping("/create")
+    public ResultDTO createClient(@RequestBody ClientDTO clientDTO) {
+        return clientService.create(clientDTO);
     }
 }

@@ -1,7 +1,9 @@
 package com.disertatie.client.model;
 
+import com.disertatie.client.dto.ClientDTO;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -12,6 +14,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "client", uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "cnp", "email"})})
 @AllArgsConstructor
+@Builder
 public class Client {
 
     @Id
@@ -34,7 +37,6 @@ public class Client {
     //    @JsonIgnore
     private String password;
 
-    @NotNull
     private Boolean status = false;
 
     private int subscriptionId;
@@ -50,6 +52,17 @@ public class Client {
     private AuthProvider authProvider;
 
     public Client() {
+    }
+
+    public static Client getEntity(ClientDTO clientDTO) {
+        return Client.builder()
+                .firstName(clientDTO.getFirstName())
+                .lastName(clientDTO.getLastName())
+                .email(clientDTO.getEmail())
+                .username(clientDTO.getUsername())
+                .password(clientDTO.getPassword())
+                .roleId(clientDTO.getRoleId())
+                .build();
     }
 
 }

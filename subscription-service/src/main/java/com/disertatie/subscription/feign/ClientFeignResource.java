@@ -9,11 +9,11 @@ import java.util.List;
 @FeignClient(name = "client-service", url = "http://localhost:8765")
 public interface ClientFeignResource {
 
-    @RequestMapping("/client-service/clients/username/{username}")
-    ClientDTO getClientByUsername(@PathVariable String username);
+    @GetMapping(value = "/client-service/clients/username", params = "username")
+    ClientDTO getClientByUsername(@RequestParam("username") String username);
 
-    @RequestMapping("/client-service/clients/email/{email}")
-    ClientDTO getClientByEmail(@PathVariable String email);
+    @GetMapping(value = "/client-service/clients/email", params = "email")
+    ClientDTO getClientByEmail(@RequestParam("email") String email);
 
     @PutMapping("/client-service/clients/update/{id}")
     ClientDTO save(@PathVariable("id") int id, @RequestBody ClientDTO client);
