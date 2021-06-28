@@ -5,6 +5,7 @@ import com.disertatie.subscription.model.RevisionInfo;
 import com.disertatie.subscription.repository.BenefitAuditRepository;
 import com.disertatie.subscription.repository.RevisionInfoRepository;
 import com.disertatie.subscription.service.BenefitService;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,18 +23,12 @@ import java.util.stream.Collectors;
 @Data
 @RestController
 @RequestMapping("/audit/benefit")
+@AllArgsConstructor
 public class BenefitAuditController {
 
     private BenefitService benefitService;
     private BenefitAuditRepository benefitAuditRepository;
     private RevisionInfoRepository revisionInfoRepository;
-
-    public BenefitAuditController(BenefitService benefitService, BenefitAuditRepository benefitAuditRepository,
-                                  RevisionInfoRepository revisionInfoRepository) {
-        this.benefitAuditRepository = benefitAuditRepository;
-        this.benefitService = benefitService;
-        this.revisionInfoRepository = revisionInfoRepository;
-    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAuditInfo/{page}/{size}")
