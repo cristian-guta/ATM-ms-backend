@@ -56,7 +56,7 @@ public class SubscriptionService {
             client = clientFeignResource.getClientByUsername(principal.getName());
         }
         Subscription subscription = new Subscription();
-        if (client.getSubscriptionId() != 0 && client.getUsername() != "admin") {
+        if (client.getSubscriptionId() > 0 && client.getUsername() != "admin") {
             subscription = subscriptionRepository.getById(client.getSubscriptionId());
             SubscriptionDTO sub = new SubscriptionDTO()
                     .setId(subscription.getId())
@@ -64,11 +64,11 @@ public class SubscriptionService {
                     .setPrice(subscription.getPrice())
                     .setSubscriptionNetwork(subscription.getSubscriptionNetwork())
                     .setBenefits(subscription.getBenefits());
-
             return sub;
         } else {
-            log.info("Something went wrong while executing getClientSubscription(...) method...");
-            return new SubscriptionDTO();
+//            log.info("Something went wrong while executing getClientSubscription(...) method...");
+//            return new SubscriptionDTO();
+            return null;
         }
     }
 
@@ -207,7 +207,8 @@ public class SubscriptionService {
         account.setCliendId(client.getId());
 
         accountFeignResource.updateAccount(account.getId(), account);
-
+        client.setSubscriptionId(subId);
+        clientFeignResource.save(client.getId(), client);
         log.info("Payment received...");
         log.info("Subscription activated...");
 
@@ -222,9 +223,9 @@ public class SubscriptionService {
             client = clientFeignResource.getClientByUsername(principal.getName());
         }
 
-        log.info("Canceling subscription for ..." + client.getFirstName() + " " + client.getLastName() + "...");
+        log.info("Canceling subscription for " + client.getFirstName() + " " + client.getLastName() + "...");
         client.setSubscriptionId(0);
-
+        clientFeignResource.save(client.getId(), client);
         log.info("Subscription canceled...");
         return new ResultDTO().setStatus(true).setMessage("Subscription removed from your account!");
     }

@@ -1,5 +1,6 @@
 package com.disertatie.account.service;
 
+import com.disertatie.account.AccountNotFoundException;
 import com.disertatie.account.dto.AccountDTO;
 import com.disertatie.account.dto.ClientDTO;
 import com.disertatie.account.dto.ResultDTO;
@@ -63,9 +64,9 @@ public class AccountService {
     }
 
     public AccountDTO getAccountById(int id) {
-        Account account = accountRepository.findAccountById(id);
-        if (account != null) {
-            return AccountDTO.getDTO(account);
+        Optional<Account> account = Optional.ofNullable(accountRepository.findAccountById(id));
+        if (account.isPresent()) {
+            return AccountDTO.getDTO(account.get());
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found!");
         }
@@ -127,17 +128,21 @@ public class AccountService {
     public ResultDTO transferMoney(int senderAccountId, int receiverAccountId, Double amount, Principal principal) throws IOException {
 
         Account account = accountRepository.findAccountById(senderAccountId);
-        Account toSendTo = accountRepository.findAccountById(receiverAccountId);
+
+        Optional<Account> toSendTo = Optional.ofNullable(accountRepository.findAccountById(receiverAccountId));
 
         try {
+            if(!toSendTo.isPresent()){
+                throw new AccountNotFoundException("Account not found");
+            }
+
             if (amount < account.getAmount()) {
+                Double receiverAmount = toSendTo.get().getAmount() + amount;
+                toSendTo.get().setAmount(receiverAmount);
                 Double senderAmount = account.getAmount() - amount;
                 account.setAmount(senderAmount);
 
                 accountRepository.save(account);
-
-                Double receiverAmount = toSendTo.getAmount() + amount;
-                toSendTo.setAmount(receiverAmount);
                 ClientDTO clientDTO = new ClientDTO();
                 if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
                     clientDTO = clientFeignResource.getClientByEmail(principal.getName());
@@ -145,14 +150,14 @@ public class AccountService {
                     clientDTO = clientFeignResource.getClientByUsername(principal.getName());
                 }
 
-                accountRepository.save(toSendTo);
+                accountRepository.save(toSendTo.get());
                 operationService.createOperation(clientDTO, senderAccountId, receiverAccountId, "TRANSFER", amount);
 
             } else {
                 throw new RuntimeException("You want to transfer more than you own! Throwing exception...");
             }
-        } catch (RuntimeException exc) {
-            exc.printStackTrace();
+        } catch (RuntimeException | AccountNotFoundException exc) {
+            return new ResultDTO().setStatus(false).setMessage(exc.getMessage());
         }
         return new ResultDTO().setStatus(true).setMessage("Amount successfully transfered!");
     }

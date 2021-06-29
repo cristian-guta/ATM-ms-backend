@@ -17,7 +17,7 @@ import javax.persistence.*;
 @Table(name = "client", uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "cnp", "email"})})
 @AllArgsConstructor
 @Builder
-@Audited
+//@Audited
 public class Client {
 
     @Id

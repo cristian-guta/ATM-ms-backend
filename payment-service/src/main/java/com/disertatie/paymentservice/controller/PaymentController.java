@@ -19,8 +19,7 @@ public class PaymentController {
     @PostMapping("/charge")
     public Charge chargeCard(HttpServletRequest request) throws Exception {
         String token = request.getHeader("token");
-        Double amount = Double.parseDouble(request.getHeader("amount"));
-        System.out.println(amount);
+        double amount = Double.parseDouble(request.getHeader("amount"));
         return this.stripeClient.chargeNewCard(token, amount * 100);
     }
 }

@@ -55,7 +55,7 @@ public class ClientService {
     public ClientDTO getCurrentClient(Principal principal) {
 
         Client client = new Client();
-        if (clientRepository.findByUsername(principal.getName()) == null) {
+        if (Optional.ofNullable(clientRepository.findClientByEmail(principal.getName())).isPresent()) {
             client = clientRepository.findClientByEmail(principal.getName());
         } else {
             client = clientRepository.findByUsername(principal.getName());

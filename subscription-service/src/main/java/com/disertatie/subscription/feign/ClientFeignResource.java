@@ -15,8 +15,8 @@ public interface ClientFeignResource {
     @GetMapping(value = "/client-service/clients/email", params = "email")
     ClientDTO getClientByEmail(@RequestParam("email") String email);
 
-    @PutMapping("/client-service/clients/update/{id}")
-    ClientDTO save(@PathVariable("id") int id, @RequestBody ClientDTO client);
+    @PutMapping(value = "/client-service/clients/update", params = "id")
+    ClientDTO save(@RequestParam("id") int id, @RequestBody ClientDTO client);
 
     @GetMapping("/client-service/clients")
     List<ClientDTO> findAll();

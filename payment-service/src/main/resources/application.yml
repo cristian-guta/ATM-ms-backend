@@ -22,8 +22,8 @@ spring:
     name: payment-service
   main:
     allow-bean-definition-overriding: true
-    jackson:
-      serialization.FAIL_ON_EMPTY_BEANS: false
+  jackson:
+    serialization.FAIL_ON_EMPTY_BEANS: false
 
 jwt:
   secret: randomsecret

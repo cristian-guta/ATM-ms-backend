@@ -49,8 +49,8 @@ ribbon:
 
 zuul:
   host:
-    connect-timeout-millis: 10000
-    socket-timeout-millis: 30000
+    connect-timeout-millis: 100000
+    socket-timeout-millis: 300000
   ignored-services: "*"
   routes:
     payment-service:
