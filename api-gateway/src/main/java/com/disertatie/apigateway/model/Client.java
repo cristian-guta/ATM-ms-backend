@@ -27,6 +27,8 @@ public class Client {
     @NotNull
     private String lastName;
 
+    private String telephoneNumber = "";
+
     private String cnp;
 
     private String address;

@@ -3,10 +3,7 @@ package com.disertatie.subscription.model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -27,5 +24,8 @@ public class SubscriptionAudit implements Serializable {
     private int revtype;
     private String name;
     private Double price;
+
+    @Column(name = "subscription_network")
+    private String subscriptionNetwork;
     private String user;
 }

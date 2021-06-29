@@ -35,6 +35,7 @@ public class ClientService {
                 .setLastName(updatedClient.getLastName())
                 .setEmail(updatedClient.getEmail())
                 .setUsername(updatedClient.getUsername())
+                .setTelephoneNumber(updatedClient.getTelephoneNumber())
                 .setSubscriptionId(updatedClient.getSubscriptionId());
         return ClientDTO.getDto(clientRepository.save(client));
     }

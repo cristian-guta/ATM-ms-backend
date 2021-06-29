@@ -45,6 +45,8 @@ public class Client {
 
     private int subscriptionId;
 
+    private String telephoneNumber = "";
+
     private int roleId;
 
     private boolean hasUpdated = false;
@@ -66,6 +68,7 @@ public class Client {
                 .username(clientDTO.getUsername())
                 .password(clientDTO.getPassword())
                 .roleId(clientDTO.getRoleId())
+                .telephoneNumber(clientDTO.getTelephoneNumber())
                 .build();
     }
 

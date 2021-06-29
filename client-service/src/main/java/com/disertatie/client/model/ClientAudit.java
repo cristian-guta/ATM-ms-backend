@@ -59,6 +59,9 @@ public class ClientAudit implements Serializable {
     @Column(name = "auth_provider")
     private String authProvider;
 
+    @Column(name = "telephone_number")
+    private String telephoneNumber;
+
     @Column(name = "user")
     private String user;
 }

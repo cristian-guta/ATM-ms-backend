@@ -18,6 +18,6 @@ public interface ClientFeignResource {
     @PutMapping("/client-service/clients/update/{id}")
     ClientDTO save(@PathVariable("id") int id, @RequestBody ClientDTO client);
 
-    @GetMapping("/client-service/clients/findAll")
+    @GetMapping("/client-service/clients")
     List<ClientDTO> findAll();
 }

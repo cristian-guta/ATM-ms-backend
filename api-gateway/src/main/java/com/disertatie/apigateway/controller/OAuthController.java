@@ -116,6 +116,7 @@ public class OAuthController {
         Role userRole = roleRepository.findByName("USER");
         client.setRole(userRole);
         client.setAuthProvider(AuthProvider.google);
+        client.setTelephoneNumber("");
         return clientRepository.save(client);
     }
 }

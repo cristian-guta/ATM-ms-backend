@@ -2,6 +2,7 @@ package com.disertatie.subscription.model;
 
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Audited
+@Builder
 public class Subscription {
 
     @Id
@@ -29,6 +31,9 @@ public class Subscription {
 
     @NotNull
     private Double price;
+
+    @Column(name = "subscription_network")
+    private String subscriptionNetwork;
 
     @NotAudited
     @ManyToMany(cascade = CascadeType.ALL)

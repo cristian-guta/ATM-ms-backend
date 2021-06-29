@@ -25,6 +25,7 @@ public class ClientDTO {
     private Boolean status;
     private int roleId;
     private int imageModelId;
+    private String telephoneNumber;
     private AuthProvider authProvider;
 
     public ClientDTO(Client client) {
@@ -41,6 +42,7 @@ public class ClientDTO {
         this.subscriptionId = client.getSubscriptionId();
         this.imageModelId = client.getImageModelId();
         this.authProvider = client.getAuthProvider();
+        this.telephoneNumber = client.getTelephoneNumber();
     }
 
     public ClientDTO() {
@@ -62,6 +64,7 @@ public class ClientDTO {
                 .subscriptionId(client.getSubscriptionId())
                 .imageModelId(client.getImageModelId())
                 .authProvider(client.getAuthProvider())
+                .telephoneNumber(client.getTelephoneNumber())
                 .build();
     }
 }

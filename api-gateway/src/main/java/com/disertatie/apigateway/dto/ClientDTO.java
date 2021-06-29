@@ -17,6 +17,7 @@ public class ClientDTO {
     private String address;
     private String email;
     private String password;
+    private String telephoneNumber;
     private int subscriptionId;
     private AuthProvider authProvider;
     private Boolean status;
@@ -32,11 +33,12 @@ public class ClientDTO {
         this.email = client.getEmail();
         this.authProvider = client.getAuthProvider();
         this.status = client.getStatus();
+        this.telephoneNumber = client.getTelephoneNumber();
         this.subscriptionId = client.getSubscriptionId();
         this.imageModelId = client.getImageModelId();
     }
 
-    public ClientDTO(String username, String firstName, String lastName, String cnp, String address, String email, int subscriptionId, int imageModelId, AuthProvider authProvider) {
+    public ClientDTO(String username, String firstName, String telephoneNumber, String lastName, String cnp, String address, String email, int subscriptionId, int imageModelId, AuthProvider authProvider) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -46,6 +48,7 @@ public class ClientDTO {
         this.subscriptionId = subscriptionId;
         this.authProvider = authProvider;
         this.imageModelId = imageModelId;
+        this.telephoneNumber = telephoneNumber;
     }
 
     public ClientDTO() {

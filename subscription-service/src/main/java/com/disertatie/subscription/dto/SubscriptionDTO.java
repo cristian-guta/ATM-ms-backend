@@ -2,6 +2,7 @@ package com.disertatie.subscription.dto;
 
 import com.disertatie.subscription.model.Benefit;
 import com.disertatie.subscription.model.Subscription;
+import com.disertatie.subscription.model.SubscriptionNetwork;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class SubscriptionDTO {
     private Double price;
     private List<Benefit> benefits;
     private int[] benefitIds;
+    private String subscriptionNetwork;
 
     public static SubscriptionDTO getDto(Subscription subscription) {
         return SubscriptionDTO.builder()
@@ -29,6 +31,7 @@ public class SubscriptionDTO {
                 .name(subscription.getName())
                 .price(subscription.getPrice())
                 .benefits(subscription.getBenefits())
+                .subscriptionNetwork(subscription.getSubscriptionNetwork())
                 .build();
     }
 }

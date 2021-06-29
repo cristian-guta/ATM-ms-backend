@@ -1,5 +1,6 @@
 package com.disertatie.subscription.service;
 
+import com.disertatie.subscription.SubscriptionNotFoundException;
 import com.disertatie.subscription.dto.AccountDTO;
 import com.disertatie.subscription.dto.ClientDTO;
 import com.disertatie.subscription.dto.ResultDTO;
@@ -8,17 +9,22 @@ import com.disertatie.subscription.feign.AccountFeignResource;
 import com.disertatie.subscription.feign.ClientFeignResource;
 import com.disertatie.subscription.model.Benefit;
 import com.disertatie.subscription.model.Subscription;
+import com.disertatie.subscription.model.SubscriptionNetwork;
 import com.disertatie.subscription.repository.BenefitRepository;
 import com.disertatie.subscription.repository.SubscriptionRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
+@AllArgsConstructor
 public class SubscriptionService {
 
     private SubscriptionRepository subscriptionRepository;
@@ -26,15 +32,6 @@ public class SubscriptionService {
     private AccountFeignResource accountFeignResource;
     private ClientFeignResource clientFeignResource;
 
-    private Logger log = Logger.getLogger(SubscriptionService.class.getName());
-
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, BenefitRepository benefitRepository,
-                               AccountFeignResource accountFeignResource, ClientFeignResource clientFeignResource) {
-        this.subscriptionRepository = subscriptionRepository;
-        this.benefitRepository = benefitRepository;
-        this.accountFeignResource = accountFeignResource;
-        this.clientFeignResource = clientFeignResource;
-    }
 
     public SubscriptionDTO createSubscription(SubscriptionDTO newSubscription) {
 
@@ -42,6 +39,7 @@ public class SubscriptionService {
         Subscription subscription = new Subscription()
                 .setName(newSubscription.getName())
                 .setPrice(newSubscription.getPrice())
+                .setSubscriptionNetwork(newSubscription.getSubscriptionNetwork())
                 .setBenefits(benefits);
 
         return SubscriptionDTO.getDto(subscriptionRepository.save(subscription));
@@ -64,6 +62,7 @@ public class SubscriptionService {
                     .setId(subscription.getId())
                     .setName(subscription.getName())
                     .setPrice(subscription.getPrice())
+                    .setSubscriptionNetwork(subscription.getSubscriptionNetwork())
                     .setBenefits(subscription.getBenefits());
 
             return sub;
@@ -73,7 +72,40 @@ public class SubscriptionService {
         }
     }
 
-    public List<SubscriptionDTO> getAllAvailableSubs() {
+    public List<SubscriptionDTO> getAllAvailableSubs(Principal principal) throws SubscriptionNotFoundException {
+        ClientDTO client;
+        if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
+            client = clientFeignResource.getClientByEmail(principal.getName());
+        } else {
+            client = clientFeignResource.getClientByUsername(principal.getName());
+        }
+
+        if (client.getRoleId() == 1) {
+            String phoneNetwork = extractClientNetwork(client).toString();
+            System.out.println(phoneNetwork);
+
+            if (phoneNetwork.equals(SubscriptionNetwork.VODAFONE.toString())) {
+                return subscriptionRepository.findBySubscriptionNetwork(SubscriptionNetwork.VODAFONE.toString())
+                        .stream()
+                        .map(SubscriptionDTO::getDto)
+                        .collect(Collectors.toList());
+            }
+            if (phoneNetwork.equals(SubscriptionNetwork.ORANGE.toString())) {
+                return subscriptionRepository.findBySubscriptionNetwork(SubscriptionNetwork.ORANGE.toString())
+                        .stream()
+                        .map(SubscriptionDTO::getDto)
+                        .collect(Collectors.toList());
+            }
+
+            if (phoneNetwork.equals(SubscriptionNetwork.TELEKOM.toString())) {
+                return subscriptionRepository.findBySubscriptionNetwork(SubscriptionNetwork.TELEKOM.toString())
+                        .stream()
+                        .map(SubscriptionDTO::getDto)
+                        .collect(Collectors.toList());
+            } else {
+                throw new SubscriptionNotFoundException("Subscription not found for network " + phoneNetwork);
+            }
+        }
 
         List<SubscriptionDTO> allSubscribtions = new ArrayList<>();
         for (Subscription sub : subscriptionRepository.findAll()) {
@@ -81,10 +113,12 @@ public class SubscriptionService {
                     .setId(sub.getId())
                     .setName(sub.getName())
                     .setPrice(sub.getPrice())
+                    .setSubscriptionNetwork(sub.getSubscriptionNetwork())
                     .setBenefits(sub.getBenefits());
             allSubscribtions.add(subs);
         }
         return allSubscribtions;
+
     }
 
     public SubscriptionDTO getSubscriptionWithBenefits(int subId) {
@@ -93,7 +127,40 @@ public class SubscriptionService {
                 .setId(subscription.getId())
                 .setName(subscription.getName())
                 .setPrice(subscription.getPrice())
+                .setSubscriptionNetwork(subscription.getSubscriptionNetwork())
                 .setBenefits(subscription.getBenefits());
+    }
+
+    public List<SubscriptionDTO> getAll() {
+        List<SubscriptionDTO> allSubscribtions = new ArrayList<>();
+        for (Subscription sub : subscriptionRepository.findAll()) {
+            SubscriptionDTO subs = new SubscriptionDTO()
+                    .setId(sub.getId())
+                    .setName(sub.getName())
+                    .setPrice(sub.getPrice())
+                    .setSubscriptionNetwork(sub.getSubscriptionNetwork())
+                    .setBenefits(sub.getBenefits());
+            allSubscribtions.add(subs);
+            if (allSubscribtions.size() == 3) {
+                return allSubscribtions;
+            }
+        }
+        return allSubscribtions;
+    }
+
+    public SubscriptionNetwork extractClientNetwork(ClientDTO clientDTO) {
+        if (clientDTO.getTelephoneNumber().startsWith("073") || clientDTO.getTelephoneNumber().startsWith("072")) {
+            return SubscriptionNetwork.VODAFONE;
+        }
+        if (clientDTO.getTelephoneNumber().startsWith("076") || clientDTO.getTelephoneNumber().startsWith("078")) {
+            return SubscriptionNetwork.TELEKOM;
+        }
+
+        if (clientDTO.getTelephoneNumber().startsWith("074") || clientDTO.getTelephoneNumber().startsWith("075")) {
+            return SubscriptionNetwork.ORANGE;
+        }
+
+        return SubscriptionNetwork.NOT_FOUND;
     }
 
     public SubscriptionDTO updateSubscription(int id, SubscriptionDTO subscriptionDTO) {
@@ -102,10 +169,12 @@ public class SubscriptionService {
         List<Benefit> benefits = benefitRepository.findByIdIn(subscriptionDTO.getBenefitIds());
 
         Subscription updateSubscription = subscriptionRepository.getById(id);
-        updateSubscription.setId(subscriptionDTO.getId())
+
+        updateSubscription
+                .setId(subscriptionDTO.getId())
                 .setName(subscriptionDTO.getName())
                 .setPrice(subscriptionDTO.getPrice())
-
+                .setSubscriptionNetwork(subscriptionDTO.getSubscriptionNetwork())
                 .setBenefits(benefits);
 
         log.info("Saving new subscription object state...");
@@ -173,4 +242,5 @@ public class SubscriptionService {
         subscriptionRepository.deleteSubscriptionById(id);
         return new ResultDTO().setStatus(true).setMessage("Subscription deleted.");
     }
+
 }

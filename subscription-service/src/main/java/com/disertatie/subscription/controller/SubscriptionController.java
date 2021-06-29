@@ -1,5 +1,6 @@
 package com.disertatie.subscription.controller;
 
+import com.disertatie.subscription.SubscriptionNotFoundException;
 import com.disertatie.subscription.dto.ResultDTO;
 import com.disertatie.subscription.dto.SubscriptionDTO;
 import com.disertatie.subscription.service.SubscriptionService;
@@ -18,9 +19,14 @@ public class SubscriptionController {
 
     private SubscriptionService subscriptionService;
 
-    @GetMapping("")
-    public List<SubscriptionDTO> getAllAvailableSubscriptions() {
-        return subscriptionService.getAllAvailableSubs();
+    @GetMapping
+    public List<SubscriptionDTO> getAllAvailableSubscriptions(Principal principal) throws SubscriptionNotFoundException {
+        return subscriptionService.getAllAvailableSubs(principal);
+    }
+
+    @GetMapping("/all")
+    public List<SubscriptionDTO> getByTelephoneNumber() {
+        return subscriptionService.getAll();
     }
 
     @PreAuthorize("isAuthenticated()")

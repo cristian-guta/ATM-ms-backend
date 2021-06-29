@@ -4,6 +4,7 @@ import com.disertatie.subscription.model.RevisionInfo;
 import com.disertatie.subscription.model.SubscriptionAudit;
 import com.disertatie.subscription.repository.RevisionInfoRepository;
 import com.disertatie.subscription.repository.SubscriptionAuditRepository;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,16 +21,12 @@ import java.util.stream.Collectors;
 
 @Data
 @RestController
+@AllArgsConstructor
 @RequestMapping("/audit/subscriptions")
 public class SubscriptionAuditController {
 
     private SubscriptionAuditRepository subscriptionAuditRepository;
     private RevisionInfoRepository revisionInfoRepository;
-
-    public SubscriptionAuditController(SubscriptionAuditRepository subscriptionAuditRepository, RevisionInfoRepository revisionInfoRepository) {
-        this.subscriptionAuditRepository = subscriptionAuditRepository;
-        this.revisionInfoRepository = revisionInfoRepository;
-    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAuditInfo/{page}/{size}")

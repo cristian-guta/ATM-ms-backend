@@ -21,6 +21,8 @@ public class ClientDTO {
     private Boolean status;
     private int roleId;
     private int imageModelId;
+    private String telephoneNumber;
+    private String hasUpdated;
 
     public ClientDTO() {
 

@@ -98,6 +98,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .setAddress(user.getAddress())
                 .setAuthProvider(AuthProvider.local)
                 .setImageModelId(user.getImageModelId())
+                .setTelephoneNumber(user.getTelephoneNumber())
                 .setSubscriptionId(0);
         Role role = roleRepository.findByName("USER");
         newUser.setRole(role);
