@@ -24,6 +24,7 @@ public class SubscriptionDTO {
     private List<Benefit> benefits;
     private int[] benefitIds;
     private String subscriptionNetwork;
+    private String currency = CurrencyDTO.RON.toString();
 
     public static SubscriptionDTO getDto(Subscription subscription) {
         return SubscriptionDTO.builder()
@@ -32,6 +33,7 @@ public class SubscriptionDTO {
                 .price(subscription.getPrice())
                 .benefits(subscription.getBenefits())
                 .subscriptionNetwork(subscription.getSubscriptionNetwork())
+              .currency(subscription.getCurrency())
                 .build();
     }
 }
