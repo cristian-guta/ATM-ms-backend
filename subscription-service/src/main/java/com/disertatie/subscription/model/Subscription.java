@@ -1,5 +1,6 @@
 package com.disertatie.subscription.model;
 
+import com.disertatie.subscription.dto.CurrencyDTO;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,4 +43,6 @@ public class Subscription {
             @JoinColumn(name = "benefit_id")
     })
     private List<Benefit> benefits;
+
+    private String currency = CurrencyDTO.RON.toString();
 }

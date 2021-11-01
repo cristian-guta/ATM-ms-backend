@@ -31,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws ResponseStatusException {
         log.info("Loading user by username...");
 
-        ClientDTO client = new ClientDTO();
+        ClientDTO client;
 
         if (clientFeignResource.getClientByUsername(username) == null) {
             client = clientFeignResource.getClientByEmail(username);

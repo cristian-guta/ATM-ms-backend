@@ -5,6 +5,7 @@ import com.disertatie.subscription.service.CustomUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+@Slf4j
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
@@ -45,13 +46,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     username = jwtTokenUtil.getEmailFromToken(jwtToken);
                 }
             } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token.");
+               log.info("Unable to get JWT Token.");
             } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired.");
+                log.info("JWT Token has expired.");
             } catch (MalformedJwtException e) {
-                System.out.println("Missing JWT token.");
+                log.info("Missing JWT token.");
             } catch (JwtException e) {
-                System.out.println("Some other exception.");
+                log.info("Some other exception.");
             }
         } else {
             logger.warn("JWT Token does not begin with Bearer String.");

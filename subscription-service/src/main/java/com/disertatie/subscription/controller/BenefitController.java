@@ -4,7 +4,6 @@ import com.disertatie.subscription.dto.BenefitDTO;
 import com.disertatie.subscription.dto.ResultDTO;
 import com.disertatie.subscription.service.BenefitService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

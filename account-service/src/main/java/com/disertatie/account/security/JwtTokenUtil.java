@@ -43,7 +43,6 @@ public class JwtTokenUtil {
     }
 
     public String getEmailFromToken(String token) {
-//        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
         return getClaimFromToken(token, Claims::getSubject);
     }
 

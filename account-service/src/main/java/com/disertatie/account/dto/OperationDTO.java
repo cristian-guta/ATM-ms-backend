@@ -23,15 +23,6 @@ public class OperationDTO {
     private int clientId;
     private Account account;
 
-    public OperationDTO(Operation operation) {
-        this.id = operation.getId();
-        this.type = operation.getType();
-        this.amount = operation.getAmount();
-        this.date = operation.getDate();
-        this.clientId = operation.getClientId();
-        this.account = operation.getAccount();
-    }
-
     public static OperationDTO getDTO(Operation operation){
         return OperationDTO.builder()
                 .id(operation.getId())

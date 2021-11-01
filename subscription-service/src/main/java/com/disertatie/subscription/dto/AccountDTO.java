@@ -16,4 +16,5 @@ public class AccountDTO {
     private Double amount;
     private String details;
     private int cliendId;
+    private String currency = CurrencyDTO.RON.toString();
 }

@@ -7,26 +7,33 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Currency;
+
+
 @Data
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountDTO {
+public class AccountDTO
+{
 
-    private int id;
-    private Double amount;
-    private String name;
-    private String details;
-    private int clientId;
+	private int id;
+	private Double amount;
+	private String name;
+	private String details;
+	private int clientId;
+	private String currency = CurrencyDTO.RON.toString();
 
-    public static AccountDTO getDTO(Account account) {
-        return AccountDTO.builder()
-                .amount(account.getAmount())
-                .name(account.getName())
-                .details(account.getDetails())
-                .id(account.getId())
-                .clientId(account.getClientId()).build();
-    }
+	public static AccountDTO getDTO(Account account)
+	{
+		return AccountDTO.builder()
+				.id(account.getId())
+				.amount(account.getAmount())
+				.name(account.getName())
+				.details(account.getDetails())
+				.clientId(account.getClientId())
+				.currency(account.getCurrency()).build();
+	}
 
 }

@@ -10,6 +10,9 @@ public interface AccountFeignResource {
     @GetMapping(value = "/account-service/accounts/client", params = "id")
     AccountDTO getClientBankAccount(@RequestParam("id") int id);
 
+    @GetMapping(value = "/account-service/accounts/currency")
+    AccountDTO getClientBankAccountByCurrency(@RequestParam("currency") String currency, @RequestParam("username") String username);
+
     @PutMapping("/account-service/accounts/{id}")
     AccountDTO updateAccount(@PathVariable int id, @RequestBody AccountDTO accountDTO);
 }

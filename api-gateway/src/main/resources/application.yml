@@ -19,7 +19,7 @@ spring:
   application:
     name: gateway-service
   datasource:
-    url: jdbc:mysql://clientdb.cl3farr1e4to.eu-central-1.rds.amazonaws.com:3306/clientdb
+    url: jdbc:mysql://localhost:3306/clientdb?serverTimezone=UTC
     username: root
     password: pacutu.98
     platform: mysql

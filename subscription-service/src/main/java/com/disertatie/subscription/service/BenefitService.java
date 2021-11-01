@@ -58,7 +58,7 @@ public class BenefitService {
     public Page<BenefitDTO> getAllUSerBenefitsPaged(int page, int size, Principal principal) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        ClientDTO client = new ClientDTO();
+        ClientDTO client;
 
         if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
             client = clientFeignResource.getClientByEmail(principal.getName());
@@ -79,9 +79,9 @@ public class BenefitService {
         log.info("Listing all benefits by subscription...");
 
         List<BenefitDTO> benefits = new ArrayList<>();
-        benefitRepository.findBySubscriptionId(id).forEach(benefit -> {
-            benefits.add(BenefitDTO.getDto(benefit));
-        });
+        benefitRepository.findBySubscriptionId(id).forEach(benefit ->
+            benefits.add(BenefitDTO.getDto(benefit))
+        );
         return benefits.stream().distinct().collect(Collectors.toList());
     }
 

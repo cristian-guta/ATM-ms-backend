@@ -7,7 +7,6 @@ import com.disertatie.subscription.repository.RevisionInfoRepository;
 import com.disertatie.subscription.service.BenefitService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;

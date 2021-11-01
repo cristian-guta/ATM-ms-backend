@@ -28,7 +28,7 @@ spring:
             client-id: 1035830881982-s2er91ab97g2iugtbnsgi1s8c3scde6v.apps.googleusercontent.com
             client-secret: 9kmkgN04TTo3GvaCXagE0HlW
   datasource:
-    url: jdbc:mysql://clientdb.cl3farr1e4to.eu-central-1.rds.amazonaws.com:3306/clientdb
+    url: jdbc:mysql://localhost:3306/clientdb?serverTimezone=UTC
     username: root
     password: pacutu.98
     platform: mysql

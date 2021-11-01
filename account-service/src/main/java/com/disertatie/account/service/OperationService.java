@@ -51,7 +51,7 @@ public class OperationService {
     public Page<OperationDTO> getAllOperations(int page, int size, Principal principal) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        ClientDTO client = new ClientDTO();
+        ClientDTO client;
 
         if (clientFeignResource.getClientByUsername(principal.getName()) == null) {
             client = clientFeignResource.getClientByEmail(principal.getName());
