@@ -138,18 +138,17 @@ public class ImageService {
         Regions clientRegion = Regions.EU_CENTRAL_1;
         File fileToUpload = new File(fileName);
 
-        System.out.format("Uploading %s to S3 bucket %s...\n", fileToUpload, bucket);
+        System.out.format("Uploading %s to S3 bucket %s...%n", fileToUpload, bucket);
         final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(clientRegion).build();
         try {
             s3.putObject(bucket, fileName, fileToUpload);
         } catch (AmazonServiceException e) {
-            System.err.println(e.getErrorMessage());
+            log.info(e.getErrorMessage());
         } catch (SdkClientException e) {
             e.printStackTrace();
         }
 
         String objUrl = getObjectUrl(bucket, fileName);
-        System.out.println(objUrl);
         runPythonScript(objUrl, principal);
 
         return new ResultDTO().setStatus(false).setMessage("Image uploaded to AWS!");

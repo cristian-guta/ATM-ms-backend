@@ -19,7 +19,7 @@ public class ClientRetentionService {
     private ClientRetentionRepository clientRetentionRepository;
 
     @Autowired
-    public ClientRetentionService(ClientRetentionRepository clientRetentionRepository) throws IOException {
+    public ClientRetentionService(ClientRetentionRepository clientRetentionRepository) {
         this.clientRetentionRepository = clientRetentionRepository;
     }
 
