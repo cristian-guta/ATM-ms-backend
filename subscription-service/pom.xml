@@ -11,6 +11,7 @@
 	<groupId>com.disertatie</groupId>
 	<artifactId>subscription-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>subscription-service</name>
 	<description>subscription-service</description>
 

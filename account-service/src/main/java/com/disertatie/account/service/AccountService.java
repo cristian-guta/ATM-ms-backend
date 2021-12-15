@@ -12,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
@@ -106,7 +105,7 @@ public class AccountService
 		account.setAmount(total);
 
 		accountRepository.save(account);
-		ClientDTO clientDTO = new ClientDTO();
+		ClientDTO clientDTO;
 		if (clientFeignResource.getClientByUsername(principal.getName()) == null)
 		{
 			clientDTO = clientFeignResource.getClientByEmail(principal.getName());
@@ -135,7 +134,7 @@ public class AccountService
 			{
 				account.setAmount(total);
 				accountRepository.save(account);
-				ClientDTO clientDTO = new ClientDTO();
+				ClientDTO clientDTO;
 				if (clientFeignResource.getClientByUsername(principal.getName()) == null)
 				{
 					clientDTO = clientFeignResource.getClientByEmail(principal.getName());
@@ -178,7 +177,7 @@ public class AccountService
 				account.setAmount(senderAmount);
 
 				accountRepository.save(account);
-				ClientDTO clientDTO = new ClientDTO();
+				ClientDTO clientDTO;
 				if (clientFeignResource.getClientByUsername(principal.getName()) == null)
 				{
 					clientDTO = clientFeignResource.getClientByEmail(principal.getName());
@@ -206,7 +205,7 @@ public class AccountService
 
 	public AccountDTO getClientAccountByCurrency(final String currency, String username) throws AccountNotFoundException
 	{
-		ClientDTO clientDTO = new ClientDTO();
+		ClientDTO clientDTO;
 		if (clientFeignResource.getClientByUsername(username) == null)
 		{
 			clientDTO = clientFeignResource.getClientByEmail(username);

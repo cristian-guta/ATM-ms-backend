@@ -1,7 +1,6 @@
 package com.disertatie.account.repository;
 
 
-import com.disertatie.account.dto.CurrencyDTO;
 import com.disertatie.account.model.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +32,5 @@ public interface AccountRepository extends JpaRepository<Account, Integer>
 	Account getAccountByCurrency(String currency);
 
 	Page<Account> findAll(Pageable pageable);
-	//    Page<Account> findAccountsByClient_Cnp(String cnp, Pageable pageable);
 
 }

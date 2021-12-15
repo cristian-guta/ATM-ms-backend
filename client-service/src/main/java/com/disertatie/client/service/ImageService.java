@@ -35,6 +35,8 @@ public class ImageService {
     private ImageRepository imageRepository;
     private ClientRepository clientRepository;
     private ClientEmotionRepository clientEmotionRepository;
+    private static final String ScriptPath = "/Users/cristianguta/Desktop/ATM-BACKEND/client-service/src/main/resources/python/face_analysis.py";
+    private static final String pythonPath = "/Users/cristianguta/Desktop/ATM-BACKEND/review-service/venv/bin/python3.9";
 
     public ImageService(ImageRepository imageRepository, ClientRepository clientRepository, ClientEmotionRepository clientEmotionRepository) {
         this.imageRepository = imageRepository;
@@ -161,8 +163,7 @@ public class ImageService {
 
     public void runPythonScript(String objUrl, Principal principal) throws IOException {
         Client client = clientRepository.findByUsername(principal.getName());
-        String ScriptPath = "/Users/cristianguta/Desktop/ATM-BACKEND/client-service/src/main/resources/python/face_analysis.py";
-        String pythonPath = "/Users/cristianguta/Desktop/ATM-BACKEND/review-service/venv/bin/python3.9";
+
 
         ProcessBuilder processBuilder = new ProcessBuilder(pythonPath, ScriptPath, objUrl);
         processBuilder.redirectErrorStream(true);

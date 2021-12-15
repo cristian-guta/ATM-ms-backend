@@ -25,5 +25,5 @@ public class BenefitAudit implements Serializable {
     private int rev;
     private int revtype;
     private String user;
-    private String Description;
+    private String description;
 }

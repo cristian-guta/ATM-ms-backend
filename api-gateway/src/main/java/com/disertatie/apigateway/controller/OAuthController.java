@@ -70,28 +70,28 @@ public class OAuthController {
                         .setAudience(Collections.singletonList(googleClientId));
         final GoogleIdToken googleIdToken = GoogleIdToken.parse(verifier.getJsonFactory(), tokenDto.getValue());
         final GoogleIdToken.Payload payload = googleIdToken.getPayload();
-        Client client = new Client();
+        Client client;
         if (clientRepository.findClientByEmail(payload.getEmail()) == null) {
             client = saveClient(payload.getEmail(), AuthProvider.google);
 
         } else
             client = clientRepository.findClientByEmail(payload.getEmail());
         TokenDTO tokenRes = login(client);
-        return new ResponseEntity(tokenRes, HttpStatus.OK);
+        return new ResponseEntity<>(tokenRes, HttpStatus.OK);
     }
 
     @PostMapping("/facebook")
-    public ResponseEntity<TokenDTO> facebook(@RequestBody TokenDTO tokenDto) throws IOException {
+    public ResponseEntity<TokenDTO> facebook(@RequestBody TokenDTO tokenDto) {
         Facebook facebook = new FacebookTemplate(tokenDto.getValue());
         final String[] fields = {"email", "picture"};
         User user = facebook.fetchObject("me", User.class, fields);
-        Client client = new Client();
+        Client client;
         if (clientRepository.findClientByEmail(user.getEmail()) != null)
             client = clientRepository.findClientByEmail(user.getEmail());
         else
             client = saveClient(user.getEmail(), AuthProvider.facebook);
         TokenDTO tokenRes = login(client);
-        return new ResponseEntity(tokenRes, HttpStatus.OK);
+        return new ResponseEntity<>(tokenRes, HttpStatus.OK);
     }
 
 

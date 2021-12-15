@@ -1,6 +1,7 @@
 package com.disertatie.account.service;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.activation.DataHandler;
@@ -14,10 +15,9 @@ import javax.mail.internet.MimeMultipart;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+@Slf4j
 @Service
 public class SenderService {
-
-    private static Logger log = Logger.getLogger(SenderService.class.getName());
 
     static void sendMail(String filename, String email, String numeClient) {
 

@@ -42,7 +42,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (client == null) {
             log.info("User not found...");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with username: " + username);
-        } else if (client.getStatus()) {
+        } else if (client.getStatus().equals(Boolean.TRUE)) {
             log.info("Invalid credentials...");
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials!");
         }

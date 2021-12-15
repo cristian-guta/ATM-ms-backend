@@ -21,86 +21,100 @@ import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @ControllerAdvice
 @AllArgsConstructor
 @Log4j2
-public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
+public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler
+{
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatus status,
-            WebRequest request) {
-        List<String> errors = new ArrayList<>();
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.add(error.getField() + ": " + error.getDefaultMessage());
-        }
-        for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-            errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
-        }
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(
+			MethodArgumentNotValidException ex,
+			HttpHeaders headers,
+			HttpStatus status,
+			WebRequest request)
+	{
+		List<String> errors = new ArrayList<>();
+		for (FieldError error : ex.getBindingResult().getFieldErrors())
+		{
+			errors.add(error.getField() + ": " + error.getDefaultMessage());
+		}
+		for (ObjectError error : ex.getBindingResult().getGlobalErrors())
+		{
+			errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
+		}
 
-        ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-        return handleExceptionInternal(
-                ex, apiError, headers, apiError.getStatus(), request);
-    }
+		ApiError apiError =
+				new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
+		return handleExceptionInternal(
+				ex, apiError, headers, apiError.getStatus(), request);
+	}
 
-    @Override
-    protected ResponseEntity<Object> handleMissingServletRequestParameter(
-            MissingServletRequestParameterException ex, HttpHeaders headers,
-            HttpStatus status, WebRequest request) {
-        String error = ex.getParameterName() + " parameter is missing";
+	@Override
+	protected ResponseEntity<Object> handleMissingServletRequestParameter(
+			MissingServletRequestParameterException ex, HttpHeaders headers,
+			HttpStatus status, WebRequest request)
+	{
+		String error = ex.getParameterName() + " parameter is missing";
 
-        ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
-    }
+		ApiError apiError =
+				new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
+		return new ResponseEntity<>(
+				apiError, new HttpHeaders(), apiError.getStatus());
+	}
 
-    @ExceptionHandler({ ConstraintViolationException.class })
-    public ResponseEntity<Object> handleConstraintViolation(
-            ConstraintViolationException ex, WebRequest request) {
-        List<String> errors = new ArrayList<String>();
-        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-            errors.add(violation.getRootBeanClass().getName() + " " +
-                    violation.getPropertyPath() + ": " + violation.getMessage());
-        }
+	@ExceptionHandler({ ConstraintViolationException.class })
+	public ResponseEntity<Object> handleConstraintViolation(
+			ConstraintViolationException ex, WebRequest request)
+	{
+		List<String> errors = new ArrayList<>();
+		for (ConstraintViolation<?> violation : ex.getConstraintViolations())
+		{
+			errors.add(violation.getRootBeanClass().getName() + " " +
+					violation.getPropertyPath() + ": " + violation.getMessage());
+		}
 
-        ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-        return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
-    }
+		ApiError apiError =
+				new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
+		return new ResponseEntity<>(
+				apiError, new HttpHeaders(), apiError.getStatus());
+	}
 
-    @ExceptionHandler({ MethodArgumentTypeMismatchException.class })
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(
-            MethodArgumentTypeMismatchException ex, WebRequest request) {
-        String error =
-                ex.getName() + " should be of type " + ex.getRequiredType().getName();
+	@ExceptionHandler({ MethodArgumentTypeMismatchException.class })
+	public ResponseEntity<Object> handleMethodArgumentTypeMismatch(
+			MethodArgumentTypeMismatchException ex, WebRequest request)
+	{
+		String error = "";
+		if (ex.getRequiredType() != null)
+		{
+          error = ex.getName() + " should be of type " + ex.getRequiredType().getName();
+      }
 
-        ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
-    }
+		ApiError apiError =
+				new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
+		return new ResponseEntity<>(
+				apiError, new HttpHeaders(), apiError.getStatus());
+	}
 
-    @Override
-    protected ResponseEntity<Object> handleNoHandlerFoundException(
-            NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
+	@Override
+	protected ResponseEntity<Object> handleNoHandlerFoundException(
+			NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request)
+	{
+		String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
 
-        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
-    }
+		ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), error);
+		return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+	}
 
-    @ExceptionHandler({ Exception.class })
-    public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
-        ApiError apiError = new ApiError(
-                HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");
-        return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
-    }
+	@ExceptionHandler({ Exception.class })
+	public ResponseEntity<Object> handleAll(Exception ex, WebRequest request)
+	{
+		ApiError apiError = new ApiError(
+				HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");
+		return new ResponseEntity<>(
+				apiError, new HttpHeaders(), apiError.getStatus());
+	}
 
 
 }

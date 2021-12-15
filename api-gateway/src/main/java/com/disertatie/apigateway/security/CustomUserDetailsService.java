@@ -50,7 +50,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws ResponseStatusException {
         log.info("Loading user by username...");
 
-        Client client = new Client();
+        Client client;
 
         if (clientRepository.findByUsername(username) == null) {
             client = clientRepository.findClientByEmail(username);

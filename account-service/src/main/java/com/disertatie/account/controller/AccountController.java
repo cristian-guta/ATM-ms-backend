@@ -2,10 +2,8 @@ package com.disertatie.account.controller;
 
 import com.disertatie.account.AccountNotFoundException;
 import com.disertatie.account.dto.AccountDTO;
-import com.disertatie.account.dto.CurrencyDTO;
 import com.disertatie.account.dto.ResultDTO;
 import com.disertatie.account.service.AccountService;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

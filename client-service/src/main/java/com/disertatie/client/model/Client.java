@@ -1,20 +1,23 @@
 package com.disertatie.client.model;
 
 import com.disertatie.client.dto.ClientDTO;
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 
 @Data
 @Accessors(chain = true)
 @Entity
 @Table(name = "client", uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "cnp", "email"})})
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Client {
 
@@ -54,9 +57,6 @@ public class Client {
     @NotNull
     @Enumerated(EnumType.STRING)
     private AuthProvider authProvider;
-
-    public Client() {
-    }
 
     public static Client getEntity(ClientDTO clientDTO) {
         return Client.builder()

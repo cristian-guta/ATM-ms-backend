@@ -20,15 +20,6 @@ public class ClientEmotion {
     private int id;
     private String emotion;
 
-//    private double anger;
-//    private double contempt;
-//    private double disgust;
-//    private double fear;
-//    private double happiness;
-//    private double neutral;
-//    private double sadness;
-//    private double surprise;
-
     @ManyToOne
     private Client client;
 

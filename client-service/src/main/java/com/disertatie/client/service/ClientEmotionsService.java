@@ -26,6 +26,6 @@ public class ClientEmotionsService {
                 .stream()
                 .map(ClientEmotionsDTO::new)
                 .collect(Collectors.toList());
-        return new PageImpl(retentionData, pageRequest, pageResult.getTotalElements());
+        return new PageImpl<>(retentionData, pageRequest, pageResult.getTotalElements());
     }
 }

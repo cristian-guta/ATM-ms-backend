@@ -35,6 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
+    @Override
     @Autowired
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -65,10 +66,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
+
                 .antMatchers("/client-service/clients/**").permitAll()
                 .antMatchers("/account-service/**").permitAll()
                 .antMatchers("/eureka/**").permitAll()
+                .antMatchers("/**").permitAll()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(((req, res, e) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
                 .and()

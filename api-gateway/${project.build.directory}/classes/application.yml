@@ -1,0 +1,91 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: false
+    register-with-eureka: false
+
+spring:
+  servlet:
+    multipart:
+      enabled: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 1035830881982-s2er91ab97g2iugtbnsgi1s8c3scde6v.apps.googleusercontent.com
+            client-secret: 9kmkgN04TTo3GvaCXagE0HlW
+  application:
+    name: gateway-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/clientdb?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: pacutu.98
+    platform: mysql
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+  main:
+    allow-bean-definition-overriding: true
+
+app:
+  oauth2:
+    authorizedRedirectUris:
+      - http://localhost:8080/oauth2/redirect
+
+jwt:
+  secret: randomsecret
+
+secretPsw: kasdjhfkadhsY776ggTyUU65khaskdjfhYuHAwjñlji
+
+server:
+  port: 8765
+
+ribbon:
+  eureka:
+    enabled: true
+
+zuul:
+  ignored-services: "*"
+  routes:
+    payment-service:
+      url: http://localhost:9005
+      path: "/payment-service/**"
+      serviceId: payment-service
+    account-service:
+      url: http://localhost:9004
+      path: "/account-service/**"
+      serviceId: account-service
+    client-service:
+      url: http://localhost:9003
+      path: "/client-service/**"
+      serviceId: client-service
+    review-service:
+      url: http://localhost:9002
+      path: "/review-service/**"
+      serviceId: review-service
+    subscription-service:
+      url: http://localhost:9001
+      path: "/subscription-service/**"
+      serviceId: subscription-service
+  strip-prefix: true
+  sensitive-headers:
+management:
+  endpoints:
+    web:
+      cors:
+        allowed-origins: "*"
+        allowed-headers: "*"
+        allowed-methods: "*"
+        max-age: 3600
+
+user:
+  files:
+    base:
+      path: /src/main/resources
+max:
+  file:
+    upload:
+      size: 524288

@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 @Component
 public class JwtTokenUtil {
-    public static final long JWT_TOKEN_VALIDITY = 24 * 60 * 60;
+    public static final long JWT_TOKEN_VALIDITY = (long) 24 * 60 * 60;
 
     @Value("${jwt:secret}")
     private String secret;
@@ -53,7 +53,7 @@ public class JwtTokenUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        Client client = new Client();
+        Client client;
         if (clientRepository.findByUsername(userDetails.getUsername()) == null) {
             client = clientRepository.findClientByEmail(userDetails.getUsername());
         } else {
@@ -84,7 +84,6 @@ public class JwtTokenUtil {
     }
 
     public String getEmailFromToken(String token) {
-//        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
         return getClaimFromToken(token, Claims::getSubject);
     }
 

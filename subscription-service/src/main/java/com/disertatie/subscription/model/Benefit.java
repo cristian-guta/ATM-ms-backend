@@ -4,6 +4,7 @@ import com.disertatie.subscription.dto.BenefitDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.hibernate.envers.Audited;
 
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Audited
 @Builder
+@NoArgsConstructor
 public class Benefit {
 
     @Id
@@ -25,9 +27,6 @@ public class Benefit {
 
     @NotNull
     private String description;
-
-    public Benefit() {
-    }
 
     public static Benefit getModel(BenefitDTO benefitDTO){
         return Benefit.builder()

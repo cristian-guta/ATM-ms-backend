@@ -11,7 +11,7 @@
     <groupId>com.disertatie</groupId>
     <artifactId>account-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>account-service</name>
     <description>account-service</description>
 
